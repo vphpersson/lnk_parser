@@ -2,7 +2,7 @@
 
 A basic _Shell Link (.LNK) Binary File_ parser.
 
-_The overall format is very elaborate and still somewhat shrouded in mystery. Only the structures I have needed are supported._
+_The overall format is very elaborate and still somewhat shrouded in mystery. Only the structures I have needed are supported. Very much a hobby project._
 
 ## Usage
 
@@ -34,7 +34,7 @@ Icon location: %SystemRoot%\System32\shell32.dll
 
 :thumbsup:
 
-### Implementation references
+## Implementation references
 
 - [[MS-SHLLINK]: Shell Link (.LNK) Binary File Format | Microsoft Docs](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-shllink/16cb4ca1-9339-4d0c-a68d-bf1d6cc0f943)
 - [libfwsi/Windows Shell Item format.asciidoc at master · libyal/libfwsi](https://github.com/libyal/libfwsi/blob/master/documentation/Windows%20Shell%20Item%20format.asciidoc)
