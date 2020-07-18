@@ -1,5 +1,6 @@
 from enum import IntEnum
 
+
 class ExtensionVersion(IntEnum):
     WINDOWS_XP_2003 = 3
     WINDOWS_VISTA = 7

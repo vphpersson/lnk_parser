@@ -23,14 +23,21 @@ class ShellLink:
     extra_data: Optional[bytes] = None
 
     @classmethod
-    def from_bytes(cls, data: bytes) -> ShellLink:
+    def from_bytes(cls, data: bytes, base_offset: int = 0) -> ShellLink:
+        """
+        Make a shell link from a sequence of bytes.
+
+        :param data: A byte sequence from which to extract the bytes constituting the shell link.
+        :param base_offset: The offset from the start of the byte sequence from where to start extracting.
+        :return: A shell link.
+        """
+
         header = ShellLinkHeader.from_bytes(data=data)
-        offset = header.SIZE
+        offset = base_offset + header.SIZE
 
         if header.link_flags.has_link_target_id_list:
             link_target_id_list = LinkTargetIDList.from_bytes(data=data, base_offset=offset)
-            # plus the terminal id
-            offset += struct_unpack_from('<H', buffer=data, offset=offset)[0] + 2
+            offset += struct_unpack_from('<H', buffer=data, offset=offset)[0] + len(LinkTargetIDList.TERMINAL_ID)
         else:
             link_target_id_list = None
 
@@ -55,8 +62,8 @@ class ShellLink:
 
             string_value, size = _read_string_data_field(
                 buffer=data,
-                base_offset=offset,
-                is_unicode=header.link_flags.is_unicode
+                is_unicode=header.link_flags.is_unicode,
+                offset=offset,
             )
             offset += size
 

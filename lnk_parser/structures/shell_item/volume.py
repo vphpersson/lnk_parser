@@ -18,10 +18,18 @@ class VolumeShellItem(ShellItem):
 
     @classmethod
     def from_bytes(cls, data: bytes, base_offset: int = 0) -> VolumeShellItem:
+        """
+        Make a volume shell item from a sequence of bytes.
+
+        :param data: A byte sequence from which to extract the bytes constituting the volume shell item.
+        :param base_offset: The offset from the start of the byte sequence from where to start extracting.
+        :return: A volume shell item.
+        """
+
         size: int = struct_unpack_from('<H', buffer=data, offset=base_offset)[0]
 
-        flags = VolumeShellItemFlagsMask.from_int(value=data[base_offset+2] & 0x7)
-        other = data[base_offset+3:size]
+        flags = VolumeShellItemFlagsMask.from_int(value=data[base_offset + 2] & 0x7)
+        other = data[base_offset + 3:size]
 
         return cls(
             flags=flags,
