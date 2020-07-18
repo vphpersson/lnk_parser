@@ -7,7 +7,6 @@ from lnk_parser.structures.drive_type import DriveType
 
 @dataclass
 class VolumeID:
-
     drive_type: DriveType
     drive_serial_number: bytes
     volume_label: str

@@ -8,10 +8,10 @@ _The overall format is very elaborate and still somewhat shrouded in mystery. On
 
 ```
 $ ./lnk_parser.py --help
-usage: lnk_parser.py [-h] lnk_files [lnk_files ...]
+usage: lnk_parser.py [-h] lnk_file [lnk_file ...]
 
 positional arguments:
-  lnk_files
+  lnk_file
 
 optional arguments:
   -h, --help  show this help message and exit

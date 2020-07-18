@@ -10,11 +10,22 @@ from lnk_parser.structures.shell_item.file_entry import FileEntryShellItem
 
 class LinkTargetIDList(list):
 
+    TERMINAL_ID = b'\x00\x00'
+
+    # TODO: Add a `strict` keyword argument (here and elsewhere)
     @classmethod
     def from_bytes(cls, data: bytes, base_offset: int = 0) -> LinkTargetIDList:
+        """
+        Make a link target id list from a sequence of bytes.
+
+        :param data: A byte sequence from which to extract the bytes constituting the link target id list.
+        :param base_offset: The offset from the start of the byte sequence from where to start extracting.
+        :return: A link target id list.
+        """
+        
         id_list_size: int = struct_unpack_from('<H', buffer=data, offset=base_offset)[0]
 
-        # TODO: Only need one list.
+        # TODO: Only need one list. But make this nicer overall first!
         data_list: List[bytes] = []
 
         offset = base_offset + 0x2

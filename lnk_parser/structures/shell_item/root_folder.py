@@ -12,16 +12,24 @@ class RootFolderShellItem(ShellItem):
     CLASS_TYPE_INDICATOR: ClassVar[Set[int]] = {0x1f}
 
     sort_index: int
+    # TODO: Support mapping to entities (My Computer e.g.)?
     shell_folder_identifier: UUID
     extension_block: bytes
 
     @classmethod
     def from_bytes(cls, data: bytes, base_offset: int = 0) -> RootFolderShellItem:
+        """
+        Make a root folder shell item from a sequence of bytes.
+
+        :param data: A byte sequence from which to extract the bytes constituting the root folder shell item.
+        :param base_offset: The offset from the start of the byte sequence from where to start extracting.
+        :return: A root folder shell item.
+        """
 
         size: int = struct_unpack_from('<H', buffer=data, offset=base_offset)[0]
 
         return cls(
-            sort_index=data[base_offset+3],
-            shell_folder_identifier=UUID(bytes_le=data[base_offset+4:base_offset+20]),
-            extension_block=data[base_offset+20:base_offset+size]
+            sort_index=data[base_offset + 3],
+            shell_folder_identifier=UUID(bytes_le=data[base_offset + 4:base_offset + 20]),
+            extension_block=data[base_offset + 20:base_offset + size]
         )

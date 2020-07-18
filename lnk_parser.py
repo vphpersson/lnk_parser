@@ -10,7 +10,7 @@ class LnkArgumentParser(ArgumentParser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.add_argument('lnk_files', nargs='+', type=FileType('rb'))
+        self.add_argument('lnk_files', nargs='+', type=FileType('rb'), metavar='lnk_file')
 
 
 def main():

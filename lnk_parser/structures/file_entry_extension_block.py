@@ -5,6 +5,8 @@ from struct import unpack_from as struct_unpack_from
 
 from lnk_parser.structures.extension_version import ExtensionVersion
 
+# TODO: Implement fully.
+
 
 @dataclass
 class FileEntryExtensionBlock:
@@ -21,3 +23,5 @@ class FileEntryExtensionBlock:
         size = struct_unpack_from('<H', buffer=data, offset=base_offset)
         if size == 0:
             return None
+
+        ...

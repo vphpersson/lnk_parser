@@ -10,6 +10,7 @@ from msdsalgs.time import dos_time_to_datetime
 
 from lnk_parser.structures.shell_item import ShellItem
 from lnk_parser.structures.file_entry_shell_item_flags import FileEntryShellItemFlagsMask
+from lnk_parser.utils import _read_null_terminated_string
 
 
 @dataclass
@@ -26,26 +27,33 @@ class FileEntryShellItem(ShellItem):
 
     @classmethod
     def from_bytes(cls, data: bytes, base_offset: int = 0) -> FileEntryShellItem:
+        """
+        Make a file entry shell item from a sequence of bytes.
+
+        :param data: A byte sequence from which to extract the bytes constituting the file entry shell item.
+        :param base_offset: The offset from the start of the byte sequence from where to start extracting.
+        :return: A file entry shell item.
+        """
+
         size: int = struct_unpack_from('<H', buffer=data, offset=base_offset)[0]
 
-        flags = FileEntryShellItemFlagsMask.from_int(value=data[base_offset+2] & 0x7)
+        flags = FileEntryShellItemFlagsMask.from_int(value=data[base_offset + 2] & 0x7)
 
-        if flags.has_unicode_strings:
-            primary_name_bytes: bytes = data[base_offset+14:base_offset+14+(data[base_offset+14:].index(b'\x00\x00') + 1)]
-            primary_name: str = primary_name_bytes.decode(encoding='utf-16-le')
-        else:
-            primary_name_bytes: bytes = data[base_offset+14:base_offset+14+(data[base_offset+14:].index(b'\x00'))]
-            primary_name: str = primary_name_bytes.decode(encoding='ascii')
+        primary_name, primary_name_byte_len = _read_null_terminated_string(
+            data=data,
+            is_unicode=flags.has_unicode_strings,
+            offset=base_offset + 14
+        )
 
         return cls(
             flags=flags,
-            file_size=struct_unpack_from('<I', buffer=data, offset=base_offset+4)[0] or None,
-            last_modified_time=dos_time_to_datetime(data[base_offset+8:base_offset+12]),
+            file_size=struct_unpack_from('<I', buffer=data, offset=base_offset + 4)[0] or None,
+            last_modified_time=dos_time_to_datetime(data[base_offset + 8:base_offset + 12]),
             file_attributes=FileAttributes.from_int(
-                value=struct_unpack_from('<H', buffer=data, offset=base_offset+12)[0]
+                value=struct_unpack_from('<H', buffer=data, offset=base_offset + 12)[0]
             ),
             primary_name=primary_name,
-            extension_block_bytes=data[base_offset+12+len(primary_name_bytes) + 1:size]
+            extension_block_bytes=data[base_offset + 12 + primary_name_byte_len + 1:size]
         )
 
     def __str__(self) -> str:
