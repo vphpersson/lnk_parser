@@ -6,7 +6,7 @@ _The overall format is very elaborate and still somewhat shrouded in mystery. On
 
 ## Usage
 
-```console
+```
 $ ./lnk_parser.py --help
 usage: lnk_parser.py [-h] lnk_files [lnk_files ...]
 
@@ -20,7 +20,7 @@ optional arguments:
 
 ### Example
 
-```console
+```
 $ ./lnk.parser.py 2017_ham_11.lnk
 ```
 
