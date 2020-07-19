@@ -5,6 +5,8 @@ from argparse import ArgumentParser, FileType, Namespace as ArgparseNamespace
 
 from lnk_parser.structures.shell_link import ShellLink
 
+# TODO: Add tests? (pytest)
+
 
 class LnkArgumentParser(ArgumentParser):
     def __init__(self, *args, **kwargs):

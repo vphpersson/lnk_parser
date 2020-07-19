@@ -6,6 +6,7 @@ from pathlib import PureWindowsPath
 from lnk_parser.structures.shell_item import ShellItem
 from lnk_parser.structures.shell_item.volume import VolumeShellItem
 from lnk_parser.structures.shell_item.file_entry import FileEntryShellItem
+from lnk_parser.exceptions import MissingTerminalIDError
 
 
 class LinkTargetIDList(list):
@@ -36,6 +37,12 @@ class LinkTargetIDList(list):
 
             offset += item_id_size
             read_data += item_id_size
+
+        if (observed_terminal_id := data[offset:offset+2]) != cls.TERMINAL_ID:
+            raise MissingTerminalIDError(
+                observed_value=observed_terminal_id,
+                terminal_id=cls.TERMINAL_ID
+            )
 
         return cls(ShellItem.from_bytes(data=d, base_offset=0) for d in data_list)
 
