@@ -1,13 +1,21 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from abc import ABC
-from typing import ClassVar, Set, Optional
+from typing import ClassVar, Set, Optional, Dict, Type
 from struct import unpack_from as struct_unpack_from
 
 
 @dataclass
 class ShellItem(ABC):
     CLASS_TYPE_INDICATOR: ClassVar[Set[int]] = NotImplemented
+
+    CLASS_TYPE_INDICATOR_TO_SHELL_ITEM_CLASS: ClassVar[Dict[int, Type[ShellItem]]] = {}
+
+    @classmethod
+    def register_shell_item(cls, shell_item_class: Type[ShellItem]) -> Type[ShellItem]:
+        for class_type_indicator in shell_item_class.CLASS_TYPE_INDICATOR:
+            cls.CLASS_TYPE_INDICATOR_TO_SHELL_ITEM_CLASS[class_type_indicator] = shell_item_class
+        return shell_item_class
 
     @classmethod
     def from_bytes(cls, data: bytes, base_offset: int = 0) -> Optional[ShellItem]:
@@ -28,9 +36,19 @@ class ShellItem(ABC):
 
         class_type_indicator: int = data[base_offset + 2]
 
-        # TODO: Use the "register pattern".
-        for subclass in cls.__subclasses__():
-            if class_type_indicator in subclass.CLASS_TYPE_INDICATOR:
-                return subclass.from_bytes(data=data, base_offset=base_offset)
-
-        return None
+        if cls != ShellItem:
+            if class_type_indicator not in cls.CLASS_TYPE_INDICATOR:
+                # TODO: Use proper exception.
+                raise ValueError
+            return cls._from_bytes(
+                data=data,
+                base_offset=base_offset
+            )
+        else:
+            try:
+                return cls.CLASS_TYPE_INDICATOR_TO_SHELL_ITEM_CLASS[class_type_indicator]._from_bytes(
+                    data=data,
+                    base_offset=base_offset
+                )
+            except KeyError:
+                return None
