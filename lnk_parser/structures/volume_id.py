@@ -12,7 +12,7 @@ class VolumeID:
     volume_label: str
 
     @classmethod
-    def from_bytes(cls, data: bytes, base_offset: int) -> VolumeID:
+    def from_bytes(cls, data: bytes, base_offset: int = 0) -> VolumeID:
         volume_id_size: int = struct_unpack_from('<I', buffer=data, offset=base_offset)[0]
 
         volume_label_offset = struct_unpack_from('<I', buffer=data, offset=base_offset+12)[0]
@@ -23,7 +23,7 @@ class VolumeID:
         else:
             volume_label = data[
                 base_offset+volume_label_offset:base_offset+volume_id_size
-            ]
+            ].decode(encoding='ascii').replace('\x00', '')
 
         return cls(
             drive_type=DriveType(struct_unpack_from('<I', buffer=data, offset=base_offset+4)[0]),

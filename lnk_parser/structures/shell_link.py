@@ -81,9 +81,11 @@ class ShellLink:
             pattern=r'\s+$',
             repl='',
             string=(
-                f'Link target: {self.relative_path or ""}{self.link_target_id_list.path}\n'
+                f'Link target: {self.link_target_id_list.path}\n'
                 + (f'Arguments: {self.command_line_arguments}\n' if self.command_line_arguments else '')
                 + f'Show command: {self.header.show_command.name}\n'
+                + (f'Name string: {self.name_string}\n' if self.name_string else '')
+                + (f'Relative path: {self.relative_path}\n' if self.relative_path else '')
                 + (f'Working dir: {self.working_dir}\n' if self.working_dir else '')
                 + (f'Icon location: {self.icon_location}\n' if self.icon_location else '')
             )

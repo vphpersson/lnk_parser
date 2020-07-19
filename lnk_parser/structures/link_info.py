@@ -4,13 +4,14 @@ from typing import Optional
 from struct import unpack_from as struct_unpack_from
 
 from lnk_parser.structures.volume_id import VolumeID
-from lnk_parser.structures.link_flags import LinkFlagsMask
+from lnk_parser.structures.link_info_flags import LinkInfoFlagsMask
 from lnk_parser.utils import _read_null_terminated_string
 
 
 @dataclass
 class LinkInfo:
     link_info_size: InitVar[int]
+    link_info_flags: LinkInfoFlagsMask
     volume_id: Optional[VolumeID] = None
     local_base_path: Optional[str] = None
     common_network_relative_link: Optional[str] = None
@@ -36,7 +37,9 @@ class LinkInfo:
         link_info_size: int = struct_unpack_from('<I', buffer=data, offset=base_offset)[0]
         link_info_header_size: int = struct_unpack_from('<I', buffer=data, offset=base_offset + 4)[0]
 
-        link_info_flags = LinkFlagsMask.from_int(value=struct_unpack_from('>I', buffer=data, offset=base_offset + 8)[0])
+        link_info_flags = LinkInfoFlagsMask.from_int(
+            value=struct_unpack_from('<I', buffer=data, offset=base_offset + 8)[0]
+        )
 
         volume_id_offset: int = struct_unpack_from('<I', buffer=data, offset=base_offset + 12)[0]
 
@@ -59,18 +62,19 @@ class LinkInfo:
 
         return cls(
             link_info_size=link_info_size,
+            link_info_flags=link_info_flags,
             volume_id=VolumeID.from_bytes(
                 data=data,
-                base_offset=volume_id_offset
+                base_offset=base_offset + volume_id_offset
             ) if link_info_flags.volume_id_and_local_base_path else None,
             local_base_path=_read_null_terminated_string(
                 data=data,
                 is_unicode=local_base_path_is_unicode,
-                offset=local_base_path_offset
+                offset=base_offset + local_base_path_offset
             )[0] if link_info_flags.volume_id_and_local_base_path else None,
             common_path_suffix=_read_null_terminated_string(
                 data=data,
                 is_unicode=common_path_is_unicode,
-                offset=common_path_suffix_offset
+                offset=base_offset + common_path_suffix_offset
             )[0] if local_base_path_offset != 0 else None,
         )

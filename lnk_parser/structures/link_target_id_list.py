@@ -37,7 +37,7 @@ class LinkTargetIDList(list):
             offset += item_id_size
             read_data += item_id_size
 
-        return cls(ShellItem.from_bytes(data=d) for d in data_list)
+        return cls(ShellItem.from_bytes(data=d, base_offset=0) for d in data_list)
 
     @property
     def path(self) -> Optional[PureWindowsPath]:
