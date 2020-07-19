@@ -11,7 +11,7 @@ def _read_string_data_field(buffer: bytes, is_unicode: bool, offset: int = 0) ->
 
 
 def _read_null_terminated_string(data: bytes, is_unicode: bool, offset: int = 0) -> Tuple[str, int]:
-
+    # Not sure if this is a very nice way.
     if is_unicode:
         num_string_bytes = data[offset:].index(b'\x00\x00') + 1
     else:
