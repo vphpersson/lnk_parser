@@ -23,10 +23,10 @@ class VolumeID:
         else:
             volume_label = data[
                 base_offset+volume_label_offset:base_offset+volume_id_size
-            ].decode(encoding='ascii').replace('\x00', '')
+            ].decode(encoding='ascii')
 
         return cls(
             drive_type=DriveType(struct_unpack_from('<I', buffer=data, offset=base_offset+4)[0]),
             drive_serial_number=data[base_offset+8:base_offset+12],
-            volume_label=volume_label
+            volume_label=volume_label.replace('\x00', '')
         )

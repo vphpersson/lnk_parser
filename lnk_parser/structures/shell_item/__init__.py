@@ -4,6 +4,8 @@ from abc import ABC
 from typing import ClassVar, Set, Optional, Dict, Type
 from struct import unpack_from as struct_unpack_from
 
+from lnk_parser.exceptions import ClassTypeIndicatorMismatchError
+
 
 @dataclass
 class ShellItem(ABC):
@@ -38,8 +40,10 @@ class ShellItem(ABC):
 
         if cls != ShellItem:
             if class_type_indicator not in cls.CLASS_TYPE_INDICATOR:
-                # TODO: Use proper exception.
-                raise ValueError
+                raise ClassTypeIndicatorMismatchError(
+                    observed_class_type_indicator=class_type_indicator,
+                    expected_class_type_indicators=cls.CLASS_TYPE_INDICATOR
+                )
             return cls._from_bytes(
                 data=data,
                 base_offset=base_offset
