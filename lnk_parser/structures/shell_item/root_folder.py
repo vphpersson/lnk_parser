@@ -1,15 +1,16 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ClassVar, Set
+from typing import ClassVar, FrozenSet
 from uuid import UUID
 from struct import unpack_from as struct_unpack_from
 
 from lnk_parser.structures.shell_item import ShellItem
 
 
+@ShellItem.register_shell_item
 @dataclass
 class RootFolderShellItem(ShellItem):
-    CLASS_TYPE_INDICATOR: ClassVar[Set[int]] = {0x1f}
+    CLASS_TYPE_INDICATOR: ClassVar[FrozenSet[int]] = frozenset((0x1f,))
 
     sort_index: int
     # TODO: Support mapping to entities (My Computer e.g.)?
@@ -17,7 +18,7 @@ class RootFolderShellItem(ShellItem):
     extension_block: bytes
 
     @classmethod
-    def from_bytes(cls, data: bytes, base_offset: int = 0) -> RootFolderShellItem:
+    def _from_bytes(cls, data: bytes, base_offset: int = 0) -> RootFolderShellItem:
         """
         Make a root folder shell item from a sequence of bytes.
 

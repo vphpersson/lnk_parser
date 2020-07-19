@@ -1,15 +1,16 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ClassVar, Set, Optional
+from typing import ClassVar, FrozenSet, Optional
 from struct import unpack_from as struct_unpack_from
 
 from lnk_parser.structures.shell_item import ShellItem
 from lnk_parser.structures.volume_shell_item_flags import VolumeShellItemFlagsMask
 
 
+@ShellItem.register_shell_item
 @dataclass
 class VolumeShellItem(ShellItem):
-    CLASS_TYPE_INDICATOR: ClassVar[Set[int]] = set(range(0x20, 0x2f + 1))
+    CLASS_TYPE_INDICATOR: ClassVar[FrozenSet[int]] = frozenset(range(0x20, 0x2f + 1))
 
     flags: VolumeShellItemFlagsMask
     # just picking a name -- is this what the flag indicates?
@@ -17,7 +18,7 @@ class VolumeShellItem(ShellItem):
     name: Optional[str] = None
 
     @classmethod
-    def from_bytes(cls, data: bytes, base_offset: int = 0) -> VolumeShellItem:
+    def _from_bytes(cls, data: bytes, base_offset: int = 0) -> VolumeShellItem:
         """
         Make a volume shell item from a sequence of bytes.
 

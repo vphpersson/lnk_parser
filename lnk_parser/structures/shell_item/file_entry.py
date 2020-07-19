@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ClassVar, Set, Optional
+from typing import ClassVar, FrozenSet, Optional
 from struct import unpack_from as struct_unpack_from
 from datetime import datetime
 from re import sub as re_sub
@@ -13,9 +13,10 @@ from lnk_parser.structures.file_entry_shell_item_flags import FileEntryShellItem
 from lnk_parser.utils import _read_null_terminated_string
 
 
+@ShellItem.register_shell_item
 @dataclass
 class FileEntryShellItem(ShellItem):
-    CLASS_TYPE_INDICATOR: ClassVar[Set[int]] = set(range(0x30, 0x3f + 1))
+    CLASS_TYPE_INDICATOR: ClassVar[FrozenSet[int]] = frozenset(range(0x30, 0x3f + 1))
 
     flags: FileEntryShellItemFlagsMask
     file_size: Optional[int]
@@ -26,7 +27,7 @@ class FileEntryShellItem(ShellItem):
     extension_block_bytes: bytes
 
     @classmethod
-    def from_bytes(cls, data: bytes, base_offset: int = 0) -> FileEntryShellItem:
+    def _from_bytes(cls, data: bytes, base_offset: int = 0) -> FileEntryShellItem:
         """
         Make a file entry shell item from a sequence of bytes.
 
