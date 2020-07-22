@@ -1,6 +1,6 @@
 from __future__ import annotations
 from struct import unpack_from as struct_unpack_from, calcsize as struct_calcsize
-from typing import List, Optional
+from typing import List, Optional, Union
 from pathlib import PureWindowsPath
 
 from lnk_parser.structures.shell_item import ShellItem
@@ -32,6 +32,7 @@ class LinkTargetIDList(list):
         read_data = 0
         while (read_data + len(cls.TERMINAL_ID)) < id_list_size:
             item_id_size: int = struct_unpack_from('<H', buffer=data, offset=offset)[0]
+
             # Add the item id size and actual data to a list.
             shell_item_data_list.append(data[offset:offset+item_id_size])
 
@@ -44,9 +45,14 @@ class LinkTargetIDList(list):
                 expected_terminal_id=cls.TERMINAL_ID
             )
 
-        return cls(
-            ShellItem.from_bytes(data=shell_item_data, base_offset=0) for shell_item_data in shell_item_data_list
-        )
+        shell_items: List[Union[ShellItem, bytes]] = []
+        for shell_item_data in shell_item_data_list:
+            try:
+                shell_items.append(ShellItem.from_bytes(data=shell_item_data, base_offset=0))
+            except KeyError:
+                shell_items.append(shell_item_data)
+
+        return cls(shell_items)
 
     @property
     def path(self) -> Optional[PureWindowsPath]:

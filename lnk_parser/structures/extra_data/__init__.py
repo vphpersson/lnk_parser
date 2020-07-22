@@ -27,6 +27,9 @@ class ExtraData(ABC):
     @classmethod
     def from_bytes(cls, data: bytes, base_offset: int = 0, strict: bool = True) -> ExtraData:
 
+        from lnk_parser.structures.extra_data.special_folder_data_block import SpecialFolderDataBlock
+        from lnk_parser.structures.extra_data.tracker_data_block import TrackerDataBlock
+
         signature: int = struct_unpack_from('<I', buffer=data, offset=base_offset+4)[0]
 
         if cls != ExtraData:
@@ -37,7 +40,7 @@ class ExtraData(ABC):
                     class_name=cls.__name__
                 )
 
-            if strict and (block_size := struct_unpack_from('<I', buffer=data, offset=base_offset)) != cls.BLOCK_SIZE:
+            if strict and (block_size := struct_unpack_from('<I', buffer=data, offset=base_offset)[0]) != cls.BLOCK_SIZE:
                 raise IncorrectExtraDataBlockSizeError(
                     observed_block_size=block_size,
                     expected_block_size=cls.BLOCK_SIZE,

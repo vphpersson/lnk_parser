@@ -1,13 +1,14 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional, Dict
-from struct import unpack_from as struct_unpack_from
+from struct import unpack_from as struct_unpack_from, error as struct_error
 from re import sub as re_sub
 
 from lnk_parser.structures.shell_link_header import ShellLinkHeader
 from lnk_parser.structures.link_target_id_list import LinkTargetIDList
 from lnk_parser.structures.link_info import LinkInfo
 from lnk_parser.utils import _read_string_data_field
+from lnk_parser.structures.extra_data import ExtraData
 
 
 @dataclass
@@ -20,7 +21,7 @@ class ShellLink:
     working_dir: Optional[str] = None
     command_line_arguments: Optional[str] = None
     icon_location: Optional[str] = None
-    extra_data: Optional[bytes] = None
+    extra_data: Optional[ExtraData] = None
 
     # TODO: Add `strict` parameter.
     @classmethod
@@ -70,11 +71,17 @@ class ShellLink:
 
             string_data_kwargs[field_name] = string_value
 
+        try:
+            extra_data = ExtraData.from_bytes(data=data, base_offset=offset)
+        except struct_error:
+            extra_data = None
+
         return cls(
             header=ShellLinkHeader.from_bytes(data=data),
             link_target_id_list=link_target_id_list,
             link_info=link_info,
-            **string_data_kwargs
+            **string_data_kwargs,
+            extra_data=extra_data
         )
 
     def __str__(self) -> str:
