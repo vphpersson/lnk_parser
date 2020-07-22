@@ -8,6 +8,7 @@ from lnk_parser.structures.extra_data import ExtraData
 from lnk_parser.exceptions import IncorrectTrackerDataBlockLengthError, IncorrectTrackerDataBlockVersionError
 
 
+@ExtraData.register_extra_data
 @dataclass
 class TrackerDataBlock(ExtraData):
     BLOCK_SIZE: ClassVar[int] = 0x00000060
@@ -30,7 +31,6 @@ class TrackerDataBlock(ExtraData):
             if (version := struct_unpack_from('<I', buffer=data, offset=base_offset+12)[0]) != cls.VERSION:
                 raise IncorrectTrackerDataBlockVersionError(observed_version=version, expected_version=cls.VERSION)
 
-        # TODO: What is the encoding of the `machine_id`? Assuming `ascii`. (Only 16 bytes?)
         return cls(
             machine_id=data[base_offset+16:base_offset+32].decode(encoding='ascii').replace('\x00', ''),
             droid=(
