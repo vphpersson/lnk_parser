@@ -22,6 +22,7 @@ class ShellLink:
     icon_location: Optional[str] = None
     extra_data: Optional[bytes] = None
 
+    # TODO: Add `strict` parameter.
     @classmethod
     def from_bytes(cls, data: bytes, base_offset: int = 0) -> ShellLink:
         """
