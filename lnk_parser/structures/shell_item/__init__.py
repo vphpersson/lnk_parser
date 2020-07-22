@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import ClassVar, Set, Optional, Dict, Type
 from struct import unpack_from as struct_unpack_from
 
@@ -18,6 +18,12 @@ class ShellItem(ABC):
         for class_type_indicator in shell_item_class.CLASS_TYPE_INDICATOR:
             cls.CLASS_TYPE_INDICATOR_TO_SHELL_ITEM_CLASS[class_type_indicator] = shell_item_class
         return shell_item_class
+
+    # TODO: Add `strict` parameter.
+    @classmethod
+    @abstractmethod
+    def _from_bytes(cls, data: bytes, base_offset: int = 0) -> ShellItem:
+        raise NotImplementedError
 
     @classmethod
     def from_bytes(cls, data: bytes, base_offset: int = 0) -> Optional[ShellItem]:
@@ -49,10 +55,7 @@ class ShellItem(ABC):
                 base_offset=base_offset
             )
         else:
-            try:
-                return cls.CLASS_TYPE_INDICATOR_TO_SHELL_ITEM_CLASS[class_type_indicator]._from_bytes(
-                    data=data,
-                    base_offset=base_offset
-                )
-            except KeyError:
-                return None
+            return cls.CLASS_TYPE_INDICATOR_TO_SHELL_ITEM_CLASS[class_type_indicator]._from_bytes(
+                data=data,
+                base_offset=base_offset
+            )

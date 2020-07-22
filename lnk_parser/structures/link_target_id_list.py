@@ -40,8 +40,8 @@ class LinkTargetIDList(list):
 
         if (observed_terminal_id := data[offset:offset+len(cls.TERMINAL_ID)]) != cls.TERMINAL_ID:
             raise MissingTerminalIDError(
-                observed_value=observed_terminal_id,
-                terminal_id=cls.TERMINAL_ID
+                observed_terminal_id=observed_terminal_id,
+                expected_terminal_id=cls.TERMINAL_ID
             )
 
         return cls(
