@@ -2,11 +2,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import ClassVar, FrozenSet, Optional
 from struct import unpack_from as struct_unpack_from
-from datetime import datetime
+from datetime import datetime, timedelta
 from re import sub as re_sub
 
 from msdsalgs.fscc.file_attributes import FileAttributes
-from msdsalgs.time import dos_time_to_datetime
+from msdsalgs.time import dos_date_to_datetime, dos_time_to_timedelta
 
 from lnk_parser.structures.shell_item import ShellItem
 from lnk_parser.structures.file_entry_shell_item_flags import FileEntryShellItemFlagsMask
@@ -20,7 +20,8 @@ class FileEntryShellItem(ShellItem):
 
     flags: FileEntryShellItemFlagsMask
     file_size: Optional[int]
-    last_modified_time: Optional[datetime]
+    last_modified_time: timedelta
+    last_modified_date: Optional[datetime]
     file_attributes: FileAttributes
     primary_name: str
     # extension_block: FileEntryExtensionBlock
@@ -49,13 +50,18 @@ class FileEntryShellItem(ShellItem):
         return cls(
             flags=flags,
             file_size=struct_unpack_from('<I', buffer=data, offset=base_offset + 4)[0] or None,
-            last_modified_time=dos_time_to_datetime(data[base_offset + 8:base_offset + 12]),
+            last_modified_time=dos_time_to_timedelta(dos_time=struct_unpack_from('<H', buffer=data, offset=8)[0]),
+            last_modified_date=dos_date_to_datetime(dos_date=struct_unpack_from('<H', buffer=data, offset=10)[0]),
             file_attributes=FileAttributes.from_int(
                 value=struct_unpack_from('<H', buffer=data, offset=base_offset + 12)[0]
             ),
             primary_name=primary_name,
             extension_block_bytes=data[base_offset + 12 + primary_name_byte_len + 1:size]
         )
+
+    @property
+    def last_modified_datetime(self) -> Optional[datetime]:
+        return (self.last_modified_date + self.last_modified_time) if self.last_modified_date else None
 
     def __str__(self) -> str:
         return re_sub(
