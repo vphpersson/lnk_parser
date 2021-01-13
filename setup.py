@@ -5,6 +5,7 @@ setup(
     version='0.1',
     packages=find_packages(),
     install_requires=[
-        'msdsalgs @ https://github.com/vphpersson/msdsalgs/tarball/master',
+        'msdsalgs @ git+ssh://git@github.com/vphpersson/msdsalgs.git#egg=msdsalgs',
+        'pyutils @ git+ssh://git@github.com/vphpersson/pyutils.git#egg=pyutils'
     ]
 )

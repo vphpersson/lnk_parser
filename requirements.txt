@@ -1,1 +1,2 @@
--e git+ssh://git@github.com/vphpersson/msdsalgs.git@5b67f429040473d0b9d6db54f0498a27a46c38d6#egg=msdsalgs
+-e git+ssh://git@github.com/vphpersson/pyutils.git#egg=pyutils
+-e git+ssh://git@github.com/vphpersson/msdsalgs.git#egg=msdsalgs
