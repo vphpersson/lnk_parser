@@ -26,9 +26,9 @@ $ ./lnk.parser.py 2017_ham_11.lnk
 
 **Output:**
 ```
-Link target: C:\Windows\system32\cmd.exe
-Arguments: /c start wscript /e:VBScript.Encode Manuel.doc & start explorer 2017" "ham" "11 & exit
-Show command: SW_SHOWMINNOACTIVE
+  Link target: C:\Windows\system32\cmd.exe
+    Arguments: /c start wscript /e:VBScript.Encode Manuel.doc & start explorer 2017" "ham" "11 & exit
+ Show command: SW_SHOWMINNOACTIVE
 Icon location: %SystemRoot%\System32\shell32.dll
 ```
 

@@ -3,6 +3,8 @@
 from __future__ import annotations
 from argparse import ArgumentParser, FileType, Namespace as ArgparseNamespace
 
+from pyutils.my_string import text_align_delimiter
+
 from lnk_parser.structures.shell_link import ShellLink
 
 # TODO: Add tests? (pytest)
@@ -19,8 +21,11 @@ def main():
     args: ArgparseNamespace = LnkArgumentParser().parse_args()
 
     print(
-        '\n\n'.join(
-            str(ShellLink.from_bytes(data=lnk_file.read())) for lnk_file in args.lnk_files
+        text_align_delimiter(
+            text='\n\n'.join(
+                str(ShellLink.from_bytes(data=lnk_file.read())) for lnk_file in args.lnk_files
+            ),
+            delimiter=': '
         )
     )
 
