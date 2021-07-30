@@ -1,6 +1,6 @@
 from __future__ import annotations
 from struct import unpack_from as struct_unpack_from, calcsize as struct_calcsize
-from typing import List, Optional, Union
+from typing import Optional, Union
 from pathlib import PureWindowsPath
 
 from lnk_parser.structures.shell_item import ShellItem
@@ -26,7 +26,7 @@ class LinkTargetIDList(list):
         id_list_size_format: str = '<H'
         id_list_size: int = struct_unpack_from(id_list_size_format, buffer=data, offset=base_offset)[0]
 
-        shell_item_data_list: List[bytes] = []
+        shell_item_data_list: list[bytes] = []
 
         offset = base_offset + struct_calcsize(id_list_size_format)
         read_data = 0
@@ -45,7 +45,8 @@ class LinkTargetIDList(list):
                 expected_terminal_id=cls.TERMINAL_ID
             )
 
-        shell_items: List[Union[ShellItem, bytes]] = []
+        # TODO: Support more `ShellItem` types?
+        shell_items: list[Union[ShellItem, bytes]] = []
         for shell_item_data in shell_item_data_list:
             try:
                 shell_items.append(ShellItem.from_bytes(data=shell_item_data, base_offset=0))
@@ -56,7 +57,7 @@ class LinkTargetIDList(list):
 
     @property
     def path(self) -> Optional[PureWindowsPath]:
-        path_segments: List[str] = []
+        path_segments: list[str] = []
         for link_target in self.__iter__():
             if isinstance(link_target, VolumeShellItem):
                 if link_target.name:

@@ -1,23 +1,37 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
-from typing import ClassVar, Set, Optional, Dict, Type
+from typing import ClassVar, Optional, Type
 from struct import unpack_from as struct_unpack_from
+from re import sub as re_sub
+
+from pyutils.my_string import text_align_delimiter
 
 from lnk_parser.exceptions import ClassTypeIndicatorMismatchError
 
 
 @dataclass
 class ShellItem(ABC):
-    CLASS_TYPE_INDICATOR: ClassVar[Set[int]] = NotImplemented
+    CLASS_TYPE_INDICATOR: ClassVar[set[int]] = NotImplemented
 
-    CLASS_TYPE_INDICATOR_TO_SHELL_ITEM_CLASS: ClassVar[Dict[int, Type[ShellItem]]] = {}
+    CLASS_TYPE_INDICATOR_TO_SHELL_ITEM_CLASS: ClassVar[dict[int, Type[ShellItem]]] = {}
 
     @classmethod
     def register_shell_item(cls, shell_item_class: Type[ShellItem]) -> Type[ShellItem]:
         for class_type_indicator in shell_item_class.CLASS_TYPE_INDICATOR:
             cls.CLASS_TYPE_INDICATOR_TO_SHELL_ITEM_CLASS[class_type_indicator] = shell_item_class
         return shell_item_class
+
+    @staticmethod
+    def _format_str(string: str):
+        return text_align_delimiter(
+            text=re_sub(
+                pattern=r'\s+$',
+                repl='',
+                string=string,
+            ),
+            delimiter=': '
+        )
 
     # TODO: Add `strict` parameter.
     @classmethod

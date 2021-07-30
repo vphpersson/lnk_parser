@@ -1,8 +1,10 @@
 from __future__ import annotations
-from dataclasses import dataclass
-from typing import Optional, Dict
-from struct import unpack_from as struct_unpack_from, error as struct_error
+from dataclasses import dataclass, field
+from typing import Optional
+from struct import unpack_from as struct_unpack_from
 from re import sub as re_sub
+
+from pyutils.my_string import underline, text_align_delimiter
 
 from lnk_parser.structures.shell_link_header import ShellLinkHeader
 from lnk_parser.structures.link_target_id_list import LinkTargetIDList
@@ -21,7 +23,7 @@ class ShellLink:
     working_dir: Optional[str] = None
     command_line_arguments: Optional[str] = None
     icon_location: Optional[str] = None
-    extra_data: Optional[ExtraData] = None
+    extra_data_list: list[ExtraData] = field(default_factory=list)
 
     # TODO: Add `strict` parameter.
     @classmethod
@@ -49,7 +51,7 @@ class ShellLink:
         else:
             link_info = None
 
-        string_data_kwargs: Dict[str, str] = {}
+        string_data_kwargs: dict[str, str] = {}
         pairs = [
             (header.link_flags.has_name, 'name_string'),
             (header.link_flags.has_relative_path, 'relative_path'),
@@ -71,30 +73,53 @@ class ShellLink:
 
             string_data_kwargs[field_name] = string_value
 
+        extra_data_list: list[ExtraData] = []
+
+        # TODO: Support more `extra_data` types?
         try:
-            extra_data = ExtraData.from_bytes(data=data, base_offset=offset)
-        except struct_error:
-            extra_data = None
+            while offset < len(data):
+                extra_data = ExtraData.from_bytes(data=data, base_offset=offset)
+                extra_data_list.append(extra_data)
+                offset += extra_data.BLOCK_SIZE
+        except KeyError as e:
+            # TODO: Present a warning message when an `ExtraData` structure that is not supported is encountered.
+            # TODO: Use a placeholder `UnknownExtraData` class for unsupported `ExtraData` structures?
+            pass
 
         return cls(
             header=ShellLinkHeader.from_bytes(data=data),
             link_target_id_list=link_target_id_list,
             link_info=link_info,
             **string_data_kwargs,
-            extra_data=extra_data
+            extra_data_list=extra_data_list
         )
 
     def __str__(self) -> str:
-        return re_sub(
-            pattern=r'\s+$',
-            repl='',
-            string=(
-                f'Link target: {self.link_target_id_list.path}\n'
-                + (f'Arguments: {self.command_line_arguments}\n' if self.command_line_arguments else '')
-                + f'Show command: {self.header.show_command.name}\n'
-                + (f'Name string: {self.name_string}\n' if self.name_string else '')
-                + (f'Relative path: {self.relative_path}\n' if self.relative_path else '')
-                + (f'Working dir: {self.working_dir}\n' if self.working_dir else '')
-                + (f'Icon location: {self.icon_location}\n' if self.icon_location else '')
-            )
+        link_target_str: str = '\n\n'.join(str(link_target_id) for link_target_id in self.link_target_id_list)
+        extra_data_str: str = '\n\n'.join(str(extra_data) for extra_data in self.extra_data_list)
+
+        # TODO: Add `LinkInfo` string?
+
+        return text_align_delimiter(
+            text=re_sub(
+                pattern=r'\s+$',
+                repl='',
+                string=(
+                    f'{underline(string="General", underline_character="-")}\n'
+                    f'Link target: {self.link_target_id_list.path}\n'
+                    f'Arguments: {self.command_line_arguments}\n'
+                    f'Name string: {self.name_string}\n'
+                    f'Relative path: {self.relative_path}\n'
+                    f'Working dir: {self.working_dir}\n'
+                    f'Icon location: {self.icon_location}\n'
+                    f'{underline(string="Header", underline_character="-")}\n'
+                    f'{self.header}\n'
+                    f'{underline(string="Link target IDs", underline_character="-")}\n'
+                    f'{link_target_str}\n'
+                    f'{underline(string="Extra data", underline_character="-")}\n'
+                    f'{extra_data_str}\n'
+                )
+            ),
+            delimiter=': ',
+            put_non_match_after_delimiter=False
         )

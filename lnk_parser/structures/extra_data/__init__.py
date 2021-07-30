@@ -1,8 +1,11 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ClassVar, Type, Dict
+from typing import ClassVar, Type
 from abc import ABC, abstractmethod
 from struct import unpack_from as struct_unpack_from
+from re import sub as re_sub
+
+from pyutils.my_string import text_align_delimiter
 
 from lnk_parser.exceptions import IncorrectExtraDataSignatureError, IncorrectExtraDataBlockSizeError
 
@@ -12,12 +15,23 @@ class ExtraData(ABC):
     SIGNATURE: ClassVar[int] = NotImplemented
     BLOCK_SIZE: ClassVar[int] = NotImplemented
 
-    SIGNATURE_TO_EXTRA_DATA_CLASS: ClassVar[Dict[int, Type[ExtraData]]] = {}
+    SIGNATURE_TO_EXTRA_DATA_CLASS: ClassVar[dict[int, Type[ExtraData]]] = {}
 
     @classmethod
     def register_extra_data(cls, extra_data_class: Type[ExtraData]) -> Type[ExtraData]:
         cls.SIGNATURE_TO_EXTRA_DATA_CLASS[extra_data_class.SIGNATURE] = extra_data_class
         return extra_data_class
+
+    @staticmethod
+    def _format_str(string: str):
+        return text_align_delimiter(
+            text=re_sub(
+                pattern=r'\s+$',
+                repl='',
+                string=string,
+            ),
+            delimiter=':'
+        )
 
     @classmethod
     @abstractmethod
@@ -29,6 +43,7 @@ class ExtraData(ABC):
 
         from lnk_parser.structures.extra_data.special_folder_data_block import SpecialFolderDataBlock
         from lnk_parser.structures.extra_data.tracker_data_block import TrackerDataBlock
+        from lnk_parser.structures.extra_data.known_folder_data_block import KnownFolderDataBlock
 
         signature: int = struct_unpack_from('<I', buffer=data, offset=base_offset+4)[0]
 

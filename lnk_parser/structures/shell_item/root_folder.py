@@ -34,3 +34,12 @@ class RootFolderShellItem(ShellItem):
             shell_folder_identifier=UUID(bytes_le=data[base_offset + 4:base_offset + 20]),
             extension_block=data[base_offset + 20:base_offset + size]
         )
+
+    def __str__(self):
+        return self._format_str(
+            string=(
+                f'Type: {self.__class__.__name__}\n'
+                f'Sort index: {self.sort_index}\n'
+                f'Shell folder identifier: {self.shell_folder_identifier}'
+            )
+        )

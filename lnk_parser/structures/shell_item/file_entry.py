@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from typing import ClassVar, FrozenSet, Optional
 from struct import unpack_from as struct_unpack_from
 from datetime import datetime, timedelta
-from re import sub as re_sub
 
 from msdsalgs.fscc.file_attributes import FileAttributes
 from msdsalgs.time import dos_date_to_datetime, dos_time_to_timedelta
@@ -20,8 +19,8 @@ class FileEntryShellItem(ShellItem):
 
     flags: FileEntryShellItemFlagsMask
     file_size: Optional[int]
-    last_modified_time: timedelta
     last_modified_date: Optional[datetime]
+    last_modified_time: timedelta
     file_attributes: FileAttributes
     primary_name: str
     # extension_block: FileEntryExtensionBlock
@@ -50,8 +49,8 @@ class FileEntryShellItem(ShellItem):
         return cls(
             flags=flags,
             file_size=struct_unpack_from('<I', buffer=data, offset=base_offset + 4)[0] or None,
-            last_modified_time=dos_time_to_timedelta(dos_time=struct_unpack_from('<H', buffer=data, offset=8)[0]),
-            last_modified_date=dos_date_to_datetime(dos_date=struct_unpack_from('<H', buffer=data, offset=10)[0]),
+            last_modified_date=dos_date_to_datetime(dos_date=struct_unpack_from('<H', buffer=data, offset=8)[0]),
+            last_modified_time=dos_time_to_timedelta(dos_time=struct_unpack_from('<H', buffer=data, offset=10)[0]),
             file_attributes=FileAttributes.from_int(
                 value=struct_unpack_from('<H', buffer=data, offset=base_offset + 12)[0]
             ),
@@ -64,13 +63,13 @@ class FileEntryShellItem(ShellItem):
         return (self.last_modified_date + self.last_modified_time) if self.last_modified_date else None
 
     def __str__(self) -> str:
-        return re_sub(
-            pattern=r'\s+$',
-            repl='',
+        return self._format_str(
             string=(
+                f'Type: {self.__class__.__name__}\n'
                 f'Primary name: {self.primary_name}\n'
-                f'File attritbutes: {self.file_attributes}\n'
-                + (f'File size: {self.file_size}\n' if self.file_size else '')
-                + (f'Last modified: {self.last_modified_time}' if self.last_modified_time else '')
+                f'Flags: {self.flags}\n'
+                f'File size: {self.file_size}\n'
+                f'File attributes: {self.file_attributes}\n'
+                f'Last modified: {self.last_modified_datetime}'
             )
         )
