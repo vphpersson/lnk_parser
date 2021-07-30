@@ -39,4 +39,10 @@ class VolumeShellItem(ShellItem):
         )
 
     def __str__(self) -> str:
-        return f'Name: {self.name}' if self.name else ''
+        return self._format_str(
+            string=(
+                f'Type: {self.__class__.__name__}\n'
+                f'Name: {self.name}\n'
+                f'Flags: {self.flags}'
+            )
+        )

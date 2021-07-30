@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ClassVar, Tuple
+from typing import ClassVar
 from struct import unpack_from as struct_unpack_from
 from uuid import UUID
 
@@ -18,8 +18,8 @@ class TrackerDataBlock(ExtraData):
     VERSION: ClassVar[int] = 0x00000000
 
     machine_id: str
-    droid: Tuple[UUID, UUID]
-    droid_birth: Tuple[UUID, UUID]
+    droid: tuple[UUID, UUID]
+    droid_birth: tuple[UUID, UUID]
 
     @classmethod
     def _from_bytes(cls, data: bytes, base_offset: int = 0, strict: bool = True) -> TrackerDataBlock:
@@ -40,5 +40,15 @@ class TrackerDataBlock(ExtraData):
             droid_birth=(
                 UUID(bytes_le=data[base_offset+64:base_offset+80]),
                 UUID(bytes_le=data[base_offset+80:base_offset+96])
+            )
+        )
+
+    def __str__(self) -> str:
+        return self._format_str(
+            string=(
+                f'Type: {self.__class__.__name__}\n'
+                f'Machine ID: {self.machine_id}\n'
+                f'Droid: {self.droid}\n'
+                f'Droid birth: {self.droid_birth}'
             )
         )

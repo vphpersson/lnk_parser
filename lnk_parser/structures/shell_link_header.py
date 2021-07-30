@@ -4,9 +4,11 @@ from typing import Optional, ClassVar
 from struct import unpack_from as struct_unpack_from
 from uuid import UUID
 from datetime import datetime
+from re import sub as re_sub
 
 from msdsalgs.fscc.file_attributes import FileAttributes
 from msdsalgs.time import filetime_to_datetime
+from pyutils.my_string import text_align_delimiter
 
 from lnk_parser.structures.link_flags import LinkFlagsMask
 from lnk_parser.structures.show_command import ShowCommand
@@ -54,4 +56,22 @@ class ShellLinkHeader:
             hot_key=hot_key if hot_key.key else None
         )
 
-
+    def __str__(self) -> str:
+        return text_align_delimiter(
+            text=re_sub(
+                pattern=r'\s+$',
+                repl='',
+                string=(
+                    f'Link flags: {self.link_flags}\n'
+                    + f'File attributes: {self.file_attributes}\n'
+                    + f'Creation time: {self.creation_time}\n'
+                    + f'Access time: {self.access_time}\n'
+                    + f'Write time: {self.write_time}\n'
+                    + f'File size: {self.file_size}\n'
+                    + f'Icon index: {self.icon_index}\n'
+                    + f'Show command: {self.show_command.name}\n'
+                    + f'Hot key: {self.hot_key}\n'
+                )
+            ),
+            delimiter=':'
+        )
