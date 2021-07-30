@@ -1,8 +1,8 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ClassVar, Type
+from typing import ClassVar, Type, Optional
 from abc import ABC, abstractmethod
-from struct import unpack_from as struct_unpack_from
+from struct import unpack_from as struct_unpack_from, pack as struct_pack
 from re import sub as re_sub
 
 from pyutils.my_string import text_align_delimiter
@@ -39,11 +39,15 @@ class ExtraData(ABC):
         raise NotImplementedError
 
     @classmethod
-    def from_bytes(cls, data: bytes, base_offset: int = 0, strict: bool = True) -> ExtraData:
+    def from_bytes(cls, data: bytes, base_offset: int = 0, strict: bool = True) -> Optional[ExtraData]:
 
         from lnk_parser.structures.extra_data.special_folder_data_block import SpecialFolderDataBlock
         from lnk_parser.structures.extra_data.tracker_data_block import TrackerDataBlock
         from lnk_parser.structures.extra_data.known_folder_data_block import KnownFolderDataBlock
+
+        # The `TerminalBlock` has been reached.
+        if 0 <= struct_unpack_from('<I', buffer=data, offset=base_offset)[0] < 4:
+            return None
 
         signature: int = struct_unpack_from('<I', buffer=data, offset=base_offset+4)[0]
 
@@ -69,3 +73,33 @@ class ExtraData(ABC):
                 base_offset=base_offset,
                 strict=strict
             )
+
+    @abstractmethod
+    def __str__(self) -> str:
+        raise NotImplementedError
+
+
+@dataclass
+class UnsupportedExtraData(ExtraData):
+    signature: int
+    block_size: int
+
+    def __str__(self) -> str:
+        return self._format_str(
+            string=(
+                f'Type: {self.__class__.__name__}\n'
+                f'Signature: 0x{struct_pack("<I", self.signature).hex()}\n'
+                f'Block size: {self.block_size}'
+            )
+        )
+
+    @classmethod
+    def from_bytes(cls, data: bytes, base_offset: int = 0) -> UnsupportedExtraData:
+        return cls(
+            signature=struct_unpack_from('<I', buffer=data, offset=base_offset+4)[0],
+            block_size=struct_unpack_from('<I', buffer=data, offset=base_offset)[0]
+        )
+
+    @classmethod
+    def _from_bytes(cls, data: bytes, base_offset: int = 0, strict: bool = True) -> ExtraData:
+        pass

@@ -1,7 +1,8 @@
 from __future__ import annotations
+from logging import getLogger
 from dataclasses import dataclass, field
 from typing import Optional
-from struct import unpack_from as struct_unpack_from
+from struct import unpack_from as struct_unpack_from, pack as struct_pack
 from re import sub as re_sub
 
 from pyutils.my_string import underline, text_align_delimiter
@@ -10,7 +11,9 @@ from lnk_parser.structures.shell_link_header import ShellLinkHeader
 from lnk_parser.structures.link_target_id_list import LinkTargetIDList
 from lnk_parser.structures.link_info import LinkInfo
 from lnk_parser.utils import _read_string_data_field
-from lnk_parser.structures.extra_data import ExtraData
+from lnk_parser.structures.extra_data import ExtraData, UnsupportedExtraData
+
+LOG = getLogger(__name__)
 
 
 @dataclass
@@ -75,16 +78,23 @@ class ShellLink:
 
         extra_data_list: list[ExtraData] = []
 
-        # TODO: Support more `extra_data` types?
-        try:
-            while offset < len(data):
+        while True:
+            try:
                 extra_data = ExtraData.from_bytes(data=data, base_offset=offset)
-                extra_data_list.append(extra_data)
-                offset += extra_data.BLOCK_SIZE
-        except KeyError as e:
-            # TODO: Present a warning message when an `ExtraData` structure that is not supported is encountered.
-            # TODO: Use a placeholder `UnknownExtraData` class for unsupported `ExtraData` structures?
-            pass
+                block_size = extra_data.BLOCK_SIZE if extra_data is not None else None
+            except KeyError as e:
+                extra_data = UnsupportedExtraData.from_bytes(data=data, base_offset=offset)
+                LOG.warning(
+                    f'No supported `ExtraData` structure for signature `0x{struct_pack("<I", extra_data.signature).hex()}`.'
+                )
+                block_size = extra_data.block_size
+
+            if extra_data is None:
+                offset += 4
+                break
+
+            offset += block_size
+            extra_data_list.append(extra_data)
 
         return cls(
             header=ShellLinkHeader.from_bytes(data=data),
@@ -98,7 +108,7 @@ class ShellLink:
         link_target_str: str = '\n\n'.join(str(link_target_id) for link_target_id in self.link_target_id_list)
         extra_data_str: str = '\n\n'.join(str(extra_data) for extra_data in self.extra_data_list)
 
-        # TODO: Add `LinkInfo` string?
+        # TODO: Add `LinkInfo` string.
 
         return text_align_delimiter(
             text=re_sub(
