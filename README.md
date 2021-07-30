@@ -26,10 +26,71 @@ $ ./lnk.parser.py 2017_ham_11.lnk
 
 **Output:**
 ```
-  Link target: C:\Windows\system32\cmd.exe
-    Arguments: /c start wscript /e:VBScript.Encode Manuel.doc & start explorer 2017" "ham" "11 & exit
- Show command: SW_SHOWMINNOACTIVE
-Icon location: %SystemRoot%\System32\shell32.dll
+WARNING: No supported `ExtraData` structure for signature `0x090000a0`.
+2017_ham_11.lnk
+=========================
+General
+-------
+            Link target: C:\Windows\system32\cmd.exe
+              Arguments: /c start wscript /e:VBScript.Encode Manuel.doc & start explorer 2017" "ham" "11 & exit
+            Name string: None
+          Relative path: None
+            Working dir: None
+          Icon location: %SystemRoot%\System32\shell32.dll
+Header
+------
+             Link flags: <LinkFlags.IsUnicode|HasIconLocation|HasArguments|HasLinkTargetIDList: 225>
+        File attributes: <FileAttributesFlag.0: 0>
+          Creation time: None
+            Access time: None
+             Write time: None
+              File size: 0
+             Icon index: 3
+           Show command: SW_SHOWMINNOACTIVE
+                Hot key: None
+Link target IDs
+---------------
+                   Type: RootFolderShellItem
+             Sort index: 80
+Shell folder identifier: 20d04fe0-3aea-1069-a2d8-08002b30309d
+
+                   Type: VolumeShellItem
+                   Name: C:\
+                  Flags: <VolumeShellItemFlags.UNKNOWN_2|UNKNOWN_1|HAS_NAME: 7>
+
+                   Type: FileEntryShellItem
+           Primary name: Windows
+                  Flags: <FileEntryShellItemFlags.IS_DIRECTORY: 1>
+              File size: None
+        File attributes: <FileAttributesFlag.FILE_ATTRIBUTE_DIRECTORY: 16>
+          Last modified: None
+
+                   Type: FileEntryShellItem
+           Primary name: system32
+                  Flags: <FileEntryShellItemFlags.IS_DIRECTORY: 1>
+              File size: None
+        File attributes: <FileAttributesFlag.FILE_ATTRIBUTE_DIRECTORY: 16>
+          Last modified: None
+
+                   Type: FileEntryShellItem
+           Primary name: cmd.exe
+                  Flags: <FileEntryShellItemFlags.IS_FILE: 2>
+              File size: None
+        File attributes: <FileAttributesFlag.0: 0>
+          Last modified: None
+Extra data
+----------
+                   Type: SpecialFolderDataBlock
+      Special folder ID: 37
+         Item ID offset: 221
+
+                   Type: KnownFolderDataBlock
+        Known folder ID: 774ec11ae7025d4eb7442eb1ae5198b7
+                 Offset: 221
+
+                   Type: UnsupportedExtraData
+              Signature: 0x090000a0
+             Block size: 149
 ```
 
 :thumbsup:
