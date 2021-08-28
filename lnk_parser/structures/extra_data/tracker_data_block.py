@@ -6,6 +6,7 @@ from uuid import UUID
 
 from lnk_parser.structures.extra_data import ExtraData
 from lnk_parser.exceptions import IncorrectTrackerDataBlockLengthError, IncorrectTrackerDataBlockVersionError
+from lnk_parser.utils import _format_str
 
 
 @ExtraData.register_extra_data
@@ -44,7 +45,7 @@ class TrackerDataBlock(ExtraData):
         )
 
     def __str__(self) -> str:
-        return self._format_str(
+        return _format_str(
             string=(
                 f'Type: {self.__class__.__name__}\n'
                 f'Machine ID: {self.machine_id}\n'

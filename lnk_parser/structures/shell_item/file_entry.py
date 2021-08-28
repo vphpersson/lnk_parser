@@ -9,7 +9,7 @@ from msdsalgs.time import dos_date_to_datetime, dos_time_to_timedelta
 
 from lnk_parser.structures.shell_item import ShellItem
 from lnk_parser.structures.file_entry_shell_item_flags import FileEntryShellItemFlagsMask
-from lnk_parser.utils import _read_null_terminated_string
+from lnk_parser.utils import _read_null_terminated_string, _format_str
 
 
 @ShellItem.register_shell_item
@@ -63,7 +63,7 @@ class FileEntryShellItem(ShellItem):
         return (self.last_modified_date + self.last_modified_time) if self.last_modified_date else None
 
     def __str__(self) -> str:
-        return self._format_str(
+        return _format_str(
             string=(
                 f'Type: {self.__class__.__name__}\n'
                 f'Primary name: {self.primary_name}\n'

@@ -4,6 +4,7 @@ from typing import ClassVar
 from struct import unpack_from as struct_unpack_from
 
 from lnk_parser.structures.extra_data import ExtraData
+from lnk_parser.utils import _format_str
 
 
 @ExtraData.register_extra_data
@@ -23,7 +24,7 @@ class SpecialFolderDataBlock(ExtraData):
         )
 
     def __str__(self) -> str:
-        return self._format_str(
+        return _format_str(
             string=(
                 f'Type: {self.__class__.__name__}\n'
                 f'Special folder ID: {self.special_folder_id}\n'
