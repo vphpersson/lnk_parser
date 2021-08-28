@@ -5,6 +5,7 @@ from struct import unpack_from as struct_unpack_from
 
 from lnk_parser.structures.shell_item import ShellItem
 from lnk_parser.structures.volume_shell_item_flags import VolumeShellItemFlagsMask
+from lnk_parser.utils import _format_str
 
 
 @ShellItem.register_shell_item
@@ -39,7 +40,7 @@ class VolumeShellItem(ShellItem):
         )
 
     def __str__(self) -> str:
-        return self._format_str(
+        return _format_str(
             string=(
                 f'Type: {self.__class__.__name__}\n'
                 f'Name: {self.name}\n'

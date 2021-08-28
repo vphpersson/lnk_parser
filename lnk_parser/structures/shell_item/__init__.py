@@ -23,15 +23,6 @@ class ShellItem(ABC):
         return shell_item_class
 
     @staticmethod
-    def _format_str(string: str):
-        return text_align_delimiter(
-            text=re_sub(
-                pattern=r'\s+$',
-                repl='',
-                string=string,
-            ),
-            delimiter=': '
-        )
 
     # TODO: Add `strict` parameter.
     @classmethod

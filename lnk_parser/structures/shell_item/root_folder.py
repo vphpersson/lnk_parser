@@ -5,6 +5,7 @@ from uuid import UUID
 from struct import unpack_from as struct_unpack_from
 
 from lnk_parser.structures.shell_item import ShellItem
+from lnk_parser.utils import _format_str
 
 
 @ShellItem.register_shell_item
@@ -36,7 +37,7 @@ class RootFolderShellItem(ShellItem):
         )
 
     def __str__(self):
-        return self._format_str(
+        return _format_str(
             string=(
                 f'Type: {self.__class__.__name__}\n'
                 f'Sort index: {self.sort_index}\n'
