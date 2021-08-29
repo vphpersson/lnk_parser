@@ -26,9 +26,8 @@ $ ./lnk.parser.py 2017_ham_11.lnk
 
 **Output:**
 ```
-WARNING: No supported `ExtraData` structure for signature `0x090000a0`.
 2017_ham_11.lnk
-=========================
+===============
 General
 -------
             Link target: C:\Windows\system32\cmd.exe
@@ -88,9 +87,14 @@ Extra data
         Known folder ID: 774ec11ae7025d4eb7442eb1ae5198b7
                  Offset: 221
 
-                   Type: UnsupportedExtraData
-              Signature: 0x090000a0
-             Block size: 149
+                   Type: PropertyStoreDataBlock
+           Storage size: 137
+                Version: 0x53505331
+              Format ID: 46588ae2-4cbc-4338-bbfc-139326986dce
+             Value size: 109
+               Value ID: 4
+             Value type: 0x1f
+                  Value: S-1-5-21-5179467701-4371295956-389049647-1001
 ```
 
 :thumbsup:
