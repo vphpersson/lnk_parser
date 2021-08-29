@@ -82,10 +82,10 @@ class ShellLink:
             try:
                 extra_data = ExtraData.from_bytes(data=data, base_offset=offset)
                 block_size = extra_data.BLOCK_SIZE if extra_data is not None else None
-            except KeyError as e:
+            except KeyError:
                 extra_data = UnsupportedExtraData.from_bytes(data=data, base_offset=offset)
                 LOG.warning(
-                    f'No supported `ExtraData` structure for signature `0x{struct_pack("<I", extra_data.signature).hex()}`.'
+                    f'No supported `ExtraData` structure for signature `0x{extra_data.signature:02x}`.'
                 )
                 block_size = extra_data.block_size
 

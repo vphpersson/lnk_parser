@@ -76,7 +76,7 @@ class UnsupportedExtraData(ExtraData):
         return _format_str(
             string=(
                 f'Type: {self.__class__.__name__}\n'
-                f'Signature: 0x{struct_pack(">I", self.signature).hex()}\n'
+                f'Signature: 0x{self.signature:02x}\n'
                 f'Block size: {self.block_size}'
             )
         )

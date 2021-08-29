@@ -11,6 +11,7 @@ from lnk_parser.structures.serialized_property_value import SerializedPropertyVa
 @dataclass
 class SerializedPropertyValueIntegerName(SerializedPropertyValue):
     property_id: int
+    value_type: int
     value: Union[bytes, str, int, UUID]
 
     @classmethod
@@ -49,7 +50,7 @@ class SerializedPropertyValueIntegerName(SerializedPropertyValue):
         else:
             value = value_bytes
 
-        return cls(value_size=value_size, property_id=property_id, value=value)
+        return cls(value_size=value_size, property_id=property_id, value_type=value_type, value=value)
 
     def __len__(self) -> int:
         return self.value_size
@@ -58,7 +59,8 @@ class SerializedPropertyValueIntegerName(SerializedPropertyValue):
         return _format_str(
             string=(
                 f'Value size: {self.value_size}\n'
-                f'ID: {self.property_id}\n'
+                f'Value ID: {self.property_id}\n'
+                f'Value type: 0x{self.value_type:02x}\n'
                 f'Value: {self.value}\n'
             )
         )

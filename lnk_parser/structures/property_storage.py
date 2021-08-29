@@ -75,7 +75,7 @@ class PropertyStorage:
         return _format_str(
             string=(
                 f'Storage size: {self.storage_size}\n'
-                f'Version: {self.version}\n'
+                f'Version: 0x{self.version[::-1].hex()}\n'
                 f'Format ID: {self.format_id}\n'
                 f'{properties_string}'
             )
