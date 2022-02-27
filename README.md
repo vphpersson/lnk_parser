@@ -21,13 +21,13 @@ optional arguments:
 ### Example
 
 ```
-$ ./lnk.parser.py 2017_ham_11.lnk
+$ ./lnk_parser.py ~/code/py/lnk_parser/lnk_files/2017_ham_11.lnk
 ```
 
 **Output:**
 ```
-2017_ham_11.lnk
-===============
+/home/vph/code/py/lnk_parser/lnk_files/2017_ham_11.lnk
+======================================================
 General
 -------
             Link target: C:\Windows\system32\cmd.exe

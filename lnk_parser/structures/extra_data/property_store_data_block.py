@@ -19,9 +19,9 @@ class PropertyStoreDataBlock(ExtraData):
         self.BLOCK_SIZE = block_size
 
     @classmethod
-    def _from_bytes(cls, data: bytes, base_offset: int = 0, strict: bool = True) -> PropertyStoreDataBlock:
+    def _from_bytes(cls, data: memoryview, base_offset: int = 0, strict: bool = True) -> PropertyStoreDataBlock:
 
-        data = memoryview(data)[base_offset:]
+        data = data[base_offset:]
         offset = 0
 
         # Skipping block size and signature.

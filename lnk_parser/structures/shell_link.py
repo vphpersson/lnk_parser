@@ -1,8 +1,8 @@
 from __future__ import annotations
 from logging import getLogger
 from dataclasses import dataclass, field
-from typing import Optional
-from struct import unpack_from as struct_unpack_from, pack as struct_pack
+from typing import Optional, ByteString
+from struct import unpack_from as struct_unpack_from
 from re import sub as re_sub
 
 from pyutils.my_string import underline, text_align_delimiter
@@ -30,7 +30,7 @@ class ShellLink:
 
     # TODO: Add `strict` parameter.
     @classmethod
-    def from_bytes(cls, data: bytes, base_offset: int = 0) -> ShellLink:
+    def from_bytes(cls, data: ByteString, base_offset: int = 0) -> ShellLink:
         """
         Make a shell link from a sequence of bytes.
 
@@ -39,8 +39,10 @@ class ShellLink:
         :return: A shell link.
         """
 
-        header = ShellLinkHeader.from_bytes(data=data)
-        offset = base_offset + header.SIZE
+        data = memoryview(data)
+
+        header = ShellLinkHeader.from_bytes(data=data, base_offset=base_offset)
+        offset = base_offset + len(header)
 
         if header.link_flags.has_link_target_id_list:
             link_target_id_list = LinkTargetIDList.from_bytes(data=data, base_offset=offset)

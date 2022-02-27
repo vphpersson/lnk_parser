@@ -23,7 +23,7 @@ class TrackerDataBlock(ExtraData):
     droid_birth: tuple[UUID, UUID]
 
     @classmethod
-    def _from_bytes(cls, data: bytes, base_offset: int = 0, strict: bool = True) -> TrackerDataBlock:
+    def _from_bytes(cls, data: memoryview, base_offset: int = 0, strict: bool = True) -> TrackerDataBlock:
 
         if strict:
             if (length := struct_unpack_from('<I', buffer=data, offset=base_offset+8)[0]) != cls.LENGTH:
@@ -33,14 +33,14 @@ class TrackerDataBlock(ExtraData):
                 raise IncorrectTrackerDataBlockVersionError(observed_version=version, expected_version=cls.VERSION)
 
         return cls(
-            machine_id=data[base_offset+16:base_offset+32].decode(encoding='ascii').replace('\x00', ''),
+            machine_id=bytes(data[base_offset+16:base_offset+32]).decode(encoding='ascii').replace('\x00', ''),
             droid=(
-                UUID(bytes_le=data[base_offset+32:base_offset+48]),
-                UUID(bytes_le=data[base_offset+48:base_offset+64])
+                UUID(bytes_le=bytes(data[base_offset+32:base_offset+48])),
+                UUID(bytes_le=bytes(data[base_offset+48:base_offset+64]))
             ),
             droid_birth=(
-                UUID(bytes_le=data[base_offset+64:base_offset+80]),
-                UUID(bytes_le=data[base_offset+80:base_offset+96])
+                UUID(bytes_le=bytes(data[base_offset+64:base_offset+80])),
+                UUID(bytes_le=bytes(data[base_offset+80:base_offset+96]))
             )
         )
 

@@ -46,7 +46,6 @@ class PropertyStorage:
         property_entries: list[SerializedPropertyValue] = []
         while True:
             if format_id == STRING_NAME_GUID:
-                property_entry = None
                 raise NotImplementedError
             else:
                 property_entry = SerializedPropertyValueIntegerName.from_bytes(

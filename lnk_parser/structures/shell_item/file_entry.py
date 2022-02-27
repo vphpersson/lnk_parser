@@ -63,6 +63,7 @@ class FileEntryShellItem(ShellItem):
         return (self.last_modified_date + self.last_modified_time) if self.last_modified_date else None
 
     def __str__(self) -> str:
+        # TODO: Add `extension_block`...
         return _format_str(
             string=(
                 f'Type: {self.__class__.__name__}\n'
