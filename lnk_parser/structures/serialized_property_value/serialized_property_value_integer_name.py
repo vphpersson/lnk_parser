@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Union, ByteString, Optional
+from typing import ByteString, Optional
 from struct import unpack_from
 from uuid import UUID
 
@@ -12,7 +12,7 @@ from lnk_parser.structures.serialized_property_value import SerializedPropertyVa
 class SerializedPropertyValueIntegerName(SerializedPropertyValue):
     property_id: int
     value_type: int
-    value: Union[bytes, str, int, UUID]
+    value: bytes | str | int | UUID
 
     @classmethod
     def from_bytes(cls, data: ByteString, base_offset: int = 0) -> Optional[SerializedPropertyValue]:

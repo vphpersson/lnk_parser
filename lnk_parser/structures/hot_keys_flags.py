@@ -1,7 +1,7 @@
 from __future__ import annotations
 from enum import IntEnum
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, ByteString
 
 
 class Key(IntEnum):
@@ -84,8 +84,8 @@ class HotKeyFlags:
     modifier_key: Optional[ModifierKey]
 
     @classmethod
-    def from_bytes(cls, data: bytes) -> HotKeyFlags:
+    def from_bytes(cls, data: ByteString) -> HotKeyFlags:
         return cls(
             key=Key(data[0]) if data[0] else None,
-            modifier_key=ModifierKey[data[1]] if data[1] else None
+            modifier_key=ModifierKey(data[1]) if data[1] else None
         )

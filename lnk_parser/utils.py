@@ -24,15 +24,15 @@ def _read_string_data_field(buffer: ByteString, is_unicode: bool, offset: int = 
     )
 
 
-def _read_null_terminated_string(data: bytes, is_unicode: bool, offset: int = 0) -> tuple[str, int]:
+def _read_null_terminated_string(data: ByteString, is_unicode: bool, offset: int = 0) -> tuple[str, int]:
     # Not sure if this is a very nice way.
     if is_unicode:
-        num_string_bytes = data[offset:].index(b'\x00\x00') + 1
+        num_string_bytes = bytes(data[offset:]).index(b'\x00\x00') + 1
     else:
-        num_string_bytes = data[offset:].index(b'\x00')
+        num_string_bytes = bytes(data[offset:]).index(b'\x00')
 
     return (
-        data[offset:offset + num_string_bytes].decode(encoding=('utf-16-le' if is_unicode else 'ascii')),
+        bytes(data[offset:offset + num_string_bytes]).decode(encoding=('utf-16-le' if is_unicode else 'ascii')),
         num_string_bytes
     )
 

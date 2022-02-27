@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass, InitVar
-from typing import Optional
+from typing import Optional, ByteString
 from struct import unpack_from as struct_unpack_from
 
 from lnk_parser.structures.volume_id import VolumeID
@@ -25,7 +25,7 @@ class LinkInfo:
         return self._link_info_size
 
     @classmethod
-    def from_bytes(cls, data: bytes, base_offset: int = 0) -> LinkInfo:
+    def from_bytes(cls, data: ByteString, base_offset: int = 0) -> LinkInfo:
         """
         Make a link info structure from a sequence of bytes.
 
@@ -33,6 +33,8 @@ class LinkInfo:
         :param base_offset: The offset from the start of the byte sequence from where to start extracting.
         :return: A link info structure.
         """
+
+        data = memoryview(data)
 
         link_info_size: int = struct_unpack_from('<I', buffer=data, offset=base_offset)[0]
         link_info_header_size: int = struct_unpack_from('<I', buffer=data, offset=base_offset + 4)[0]

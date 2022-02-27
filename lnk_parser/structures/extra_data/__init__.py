@@ -1,8 +1,8 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ClassVar, Type, Optional
+from typing import ClassVar, Type, Optional, ByteString
 from abc import ABC, abstractmethod
-from struct import unpack_from as struct_unpack_from, pack as struct_pack
+from struct import unpack_from as struct_unpack_from
 
 from lnk_parser.exceptions import IncorrectExtraDataSignatureError, IncorrectExtraDataBlockSizeError
 from lnk_parser.utils import _format_str
@@ -22,16 +22,18 @@ class ExtraData(ABC):
 
     @classmethod
     @abstractmethod
-    def _from_bytes(cls, data: bytes, base_offset: int = 0, strict: bool = True) -> ExtraData:
+    def _from_bytes(cls, data: memoryview, base_offset: int = 0, strict: bool = True) -> ExtraData:
         raise NotImplementedError
 
     @classmethod
-    def from_bytes(cls, data: bytes, base_offset: int = 0, strict: bool = True) -> Optional[ExtraData]:
+    def from_bytes(cls, data: ByteString, base_offset: int = 0, strict: bool = True) -> Optional[ExtraData]:
 
         from lnk_parser.structures.extra_data.special_folder_data_block import SpecialFolderDataBlock
         from lnk_parser.structures.extra_data.tracker_data_block import TrackerDataBlock
         from lnk_parser.structures.extra_data.known_folder_data_block import KnownFolderDataBlock
         from lnk_parser.structures.extra_data.property_store_data_block import PropertyStoreDataBlock
+
+        data = memoryview(data)
 
         # The `TerminalBlock` has been reached.
         if 0 <= struct_unpack_from('<I', buffer=data, offset=base_offset)[0] < 4:
@@ -82,7 +84,7 @@ class UnsupportedExtraData(ExtraData):
         )
 
     @classmethod
-    def from_bytes(cls, data: bytes, base_offset: int = 0) -> UnsupportedExtraData:
+    def from_bytes(cls, data: ByteString, base_offset: int = 0, strict: bool = True) -> UnsupportedExtraData:
         return cls(
             signature=struct_unpack_from('<I', buffer=data, offset=base_offset+4)[0],
             block_size=struct_unpack_from('<I', buffer=data, offset=base_offset)[0]

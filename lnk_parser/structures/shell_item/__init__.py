@@ -3,9 +3,6 @@ from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from typing import ClassVar, Optional, Type
 from struct import unpack_from as struct_unpack_from
-from re import sub as re_sub
-
-from pyutils.my_string import text_align_delimiter
 
 from lnk_parser.exceptions import ClassTypeIndicatorMismatchError
 
@@ -21,8 +18,6 @@ class ShellItem(ABC):
         for class_type_indicator in shell_item_class.CLASS_TYPE_INDICATOR:
             cls.CLASS_TYPE_INDICATOR_TO_SHELL_ITEM_CLASS[class_type_indicator] = shell_item_class
         return shell_item_class
-
-    @staticmethod
 
     # TODO: Add `strict` parameter.
     @classmethod

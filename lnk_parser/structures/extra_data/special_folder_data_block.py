@@ -17,7 +17,7 @@ class SpecialFolderDataBlock(ExtraData):
     item_id_offset: int
 
     @classmethod
-    def _from_bytes(cls, data: bytes, base_offset: int = 0, strict: bool = True) -> SpecialFolderDataBlock:
+    def _from_bytes(cls, data: memoryview, base_offset: int = 0, strict: bool = True) -> SpecialFolderDataBlock:
         return cls(
             special_folder_id=struct_unpack_from('<I', buffer=data, offset=base_offset+8)[0],
             item_id_offset=struct_unpack_from('<I', buffer=data, offset=base_offset+12)[0]

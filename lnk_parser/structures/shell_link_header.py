@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Optional, ClassVar
+from typing import Optional, ClassVar, ByteString
 from struct import unpack_from as struct_unpack_from
 from uuid import UUID
 from datetime import datetime
@@ -31,7 +31,7 @@ class ShellLinkHeader:
     hot_key: Optional[HotKeyFlags]
 
     @classmethod
-    def from_bytes(cls, data: bytes, base_offset: int = 0) -> ShellLinkHeader:
+    def from_bytes(cls, data: ByteString, base_offset: int = 0) -> ShellLinkHeader:
         """
         Make a shell link header from a sequence of bytes.
 
@@ -39,6 +39,10 @@ class ShellLinkHeader:
         :param base_offset: The offset from the start of the byte sequence from where to start extracting.
         :return: A shell link header.
         """
+
+        data = memoryview(data)
+
+        # TODO: Remove magic numbers?
 
         hot_key = HotKeyFlags.from_bytes(data=data[base_offset+0x0040:0x0042])
 
@@ -56,6 +60,9 @@ class ShellLinkHeader:
             hot_key=hot_key if hot_key.key else None
         )
 
+    def __len__(self) -> int:
+        return self.SIZE
+
     def __str__(self) -> str:
         return text_align_delimiter(
             text=re_sub(
@@ -63,14 +70,14 @@ class ShellLinkHeader:
                 repl='',
                 string=(
                     f'Link flags: {self.link_flags}\n'
-                    + f'File attributes: {self.file_attributes}\n'
-                    + f'Creation time: {self.creation_time}\n'
-                    + f'Access time: {self.access_time}\n'
-                    + f'Write time: {self.write_time}\n'
-                    + f'File size: {self.file_size}\n'
-                    + f'Icon index: {self.icon_index}\n'
-                    + f'Show command: {self.show_command.name}\n'
-                    + f'Hot key: {self.hot_key}\n'
+                    f'File attributes: {self.file_attributes}\n'
+                    f'Creation time: {self.creation_time}\n'
+                    f'Access time: {self.access_time}\n'
+                    f'Write time: {self.write_time}\n'
+                    f'File size: {self.file_size}\n'
+                    f'Icon index: {self.icon_index}\n'
+                    f'Show command: {self.show_command.name}\n'
+                    f'Hot key: {self.hot_key}\n'
                 )
             ),
             delimiter=':'
