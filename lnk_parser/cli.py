@@ -1,7 +1,7 @@
 from io import BufferedReader
 from argparse import FileType
 
-from pyutils.argparse.typed_argument_parser import TypedArgumentParser
+from typed_argument_parser import TypedArgumentParser
 
 
 class LnkParserArgumentParser(TypedArgumentParser):

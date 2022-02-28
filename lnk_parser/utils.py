@@ -2,7 +2,7 @@ from struct import unpack_from as struct_unpack_from
 from typing import ByteString
 from re import sub as re_sub
 
-from pyutils.my_string import text_align_delimiter
+from string_utils_py import text_align_delimiter
 
 
 def _read_string_data_field(buffer: ByteString, is_unicode: bool, offset: int = 0) -> tuple[str, int]:

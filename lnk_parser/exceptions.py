@@ -1,6 +1,6 @@
 from typing import FrozenSet
 
-from pyutils.my_exceptions import ParsingError
+from parsing_error import ParsingError
 
 
 class ClassTypeIndicatorMismatchError(ParsingError):
