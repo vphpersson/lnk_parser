@@ -5,7 +5,7 @@ from typing import Optional, ByteString
 from struct import unpack_from as struct_unpack_from
 from re import sub as re_sub
 
-from pyutils.my_string import underline, text_align_delimiter
+from string_utils_py import underline, text_align_delimiter
 
 from lnk_parser.structures.shell_link_header import ShellLinkHeader
 from lnk_parser.structures.link_target_id_list import LinkTargetIDList

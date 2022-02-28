@@ -5,7 +5,7 @@ from typing import Type
 from logging import WARNING, StreamHandler, Formatter
 from sys import stderr
 
-from pyutils.my_string import text_align_delimiter, underline
+from string_utils_py import text_align_delimiter, underline
 
 from lnk_parser.cli import LnkParserArgumentParser
 from lnk_parser.structures.shell_link import ShellLink, LOG

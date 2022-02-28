@@ -8,7 +8,7 @@ from re import sub as re_sub
 
 from msdsalgs.fscc.file_attributes import FileAttributes
 from msdsalgs.time import filetime_to_datetime
-from pyutils.my_string import text_align_delimiter
+from string_utils_py import text_align_delimiter
 
 from lnk_parser.structures.link_flags import LinkFlagsMask
 from lnk_parser.structures.show_command import ShowCommand
