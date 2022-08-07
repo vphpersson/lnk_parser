@@ -1,9 +1,13 @@
+from logging import Logger, getLogger
 from struct import unpack_from as struct_unpack_from
 from typing import ByteString
 from re import sub as re_sub
 from locale import getpreferredencoding
 
 from string_utils_py import text_align_delimiter
+
+
+LOG: Logger = getLogger(__name__)
 
 
 def get_system_default_encoding(*args, **kwargs) -> str:
@@ -60,14 +64,36 @@ def _decode_null_terminated_string(
     :return: The decoded string and the number of bytes it constituted in the data buffer.
     """
 
-    # Not sure if this is a very nice way.
+    # NOTE: Not sure if this is a very nice way of decoding.
+
     if is_unicode:
+        encoding = 'utf-16-le'
+
         num_string_bytes = bytes(data[offset:]).index(b'\x00\x00') + 1
-        return bytes(data[offset:offset + num_string_bytes]).decode(encoding='utf-16-le'), num_string_bytes
+        if num_string_bytes == 1:
+            return '', num_string_bytes
+
+        string_bytes = bytes(data[offset:offset + num_string_bytes])
+
+        try:
+            return string_bytes.decode(encoding=encoding), num_string_bytes
+        except UnicodeError as e:
+            raise ValueError(
+                f'Unable to decode the bytes {string_bytes} with the encoding {encoding}. '
+                'Maybe the offset is incorrect.'
+            ) from e
     else:
-        num_string_bytes = bytes(data[offset:]).index(b'\x00')
         system_default_encoding = system_default_encoding or get_system_default_encoding()
-        return bytes(data[offset:offset + num_string_bytes]).decode(encoding=system_default_encoding), num_string_bytes
+        num_string_bytes = bytes(data[offset:]).index(b'\x00')
+        string_bytes = bytes(data[offset:offset + num_string_bytes])
+
+        try:
+            return string_bytes.decode(encoding=system_default_encoding), num_string_bytes
+        except UnicodeError as e:
+            raise ValueError(
+                f'Unable to decode the bytes {string_bytes} with the system encoding {system_default_encoding}. '
+                'Maybe the encoding or offset is incorrect.'
+            ) from e
 
 
 def _format_str(string: str) -> str:

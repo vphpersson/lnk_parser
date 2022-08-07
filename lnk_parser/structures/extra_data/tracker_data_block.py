@@ -32,6 +32,7 @@ class TrackerDataBlock(ExtraData):
             if (version := struct_unpack_from('<I', buffer=data, offset=base_offset+12)[0]) != cls.VERSION:
                 raise IncorrectTrackerDataBlockVersionError(observed_version=version, expected_version=cls.VERSION)
 
+        # TODO: Should `ascii` really be used here?
         return cls(
             machine_id=bytes(data[base_offset+16:base_offset+32]).decode(encoding='ascii').replace('\x00', ''),
             droid=(
