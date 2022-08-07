@@ -8,13 +8,17 @@ _The overall format is very elaborate and still somewhat shrouded in mystery. On
 
 ```
 $ ./lnk_parser.py --help
-usage: lnk_parser.py [-h] lnk_file [lnk_file ...]
+usage: lnk_parser.py [-h] [--system-encoding SYSTEM_ENCODING] lnk_file [lnk_file ...]
+
+A parser for Shell Link (.LNK) files.
 
 positional arguments:
-  lnk_file
+  lnk_file              The path of an LNK file to be parsed.
 
-optional arguments:
-  -h, --help  show this help message and exit
+options:
+  -h, --help            show this help message and exit
+  --system-encoding SYSTEM_ENCODING
+                        The default encoding on the system from which the LNK file originated. Defaults to that of the current system.
 ```
 
 
@@ -77,6 +81,8 @@ Shell folder identifier: 20d04fe0-3aea-1069-a2d8-08002b30309d
               File size: None
         File attributes: <FileAttributesFlag.0: 0>
           Last modified: None
+Link info
+---------
 Extra data
 ----------
                    Type: SpecialFolderDataBlock

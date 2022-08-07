@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ClassVar, FrozenSet, Optional
+from typing import ClassVar, FrozenSet, ByteString
 from struct import unpack_from as struct_unpack_from
 from datetime import datetime, timedelta
 
@@ -9,7 +9,7 @@ from msdsalgs.time import dos_date_to_datetime, dos_time_to_timedelta
 
 from lnk_parser.structures.shell_item import ShellItem
 from lnk_parser.structures.file_entry_shell_item_flags import FileEntryShellItemFlagsMask
-from lnk_parser.utils import _read_null_terminated_string, _format_str
+from lnk_parser.utils import _decode_null_terminated_string, _format_str
 
 
 @ShellItem.register_shell_item
@@ -18,8 +18,8 @@ class FileEntryShellItem(ShellItem):
     CLASS_TYPE_INDICATOR: ClassVar[FrozenSet[int]] = frozenset(range(0x30, 0x3f + 1))
 
     flags: FileEntryShellItemFlagsMask
-    file_size: Optional[int]
-    last_modified_date: Optional[datetime]
+    file_size: int | None
+    last_modified_date: datetime | None
     last_modified_time: timedelta
     file_attributes: FileAttributes
     primary_name: str
@@ -27,20 +27,28 @@ class FileEntryShellItem(ShellItem):
     extension_block_bytes: bytes
 
     @classmethod
-    def _from_bytes(cls, data: bytes, base_offset: int = 0) -> FileEntryShellItem:
+    def _from_bytes(
+        cls,
+        data: ByteString | memoryview,
+        base_offset: int = 0,
+        system_default_encoding: str | None = None
+    ) -> FileEntryShellItem:
         """
         Make a file entry shell item from a sequence of bytes.
 
         :param data: A byte sequence from which to extract the bytes constituting the file entry shell item.
         :param base_offset: The offset from the start of the byte sequence from where to start extracting.
+        :param system_default_encoding: The default encoding on the system on which the data was generated.
         :return: A file entry shell item.
         """
+
+        data = memoryview(data)
 
         size: int = struct_unpack_from('<H', buffer=data, offset=base_offset)[0]
 
         flags = FileEntryShellItemFlagsMask.from_int(value=data[base_offset + 2] & 0x7)
 
-        primary_name, primary_name_byte_len = _read_null_terminated_string(
+        primary_name, primary_name_byte_len = _decode_null_terminated_string(
             data=data,
             is_unicode=flags.has_unicode_strings,
             offset=base_offset + 14
@@ -55,11 +63,11 @@ class FileEntryShellItem(ShellItem):
                 value=struct_unpack_from('<H', buffer=data, offset=base_offset + 12)[0]
             ),
             primary_name=primary_name,
-            extension_block_bytes=data[base_offset + 12 + primary_name_byte_len + 1:size]
+            extension_block_bytes=bytes(data[base_offset + 12 + primary_name_byte_len + 1:size])
         )
 
     @property
-    def last_modified_datetime(self) -> Optional[datetime]:
+    def last_modified_datetime(self) -> datetime | None:
         return (self.last_modified_date + self.last_modified_time) if self.last_modified_date else None
 
     def __str__(self) -> str:

@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='lnk_parser',
-    version='0.1',
+    version='0.2',
     packages=find_packages(),
     install_requires=[
         'strings_utils_py @ git+https://github.com/vphpersson/string_utils_py.git#egg=string_utils_py',

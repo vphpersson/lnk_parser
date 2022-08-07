@@ -1,7 +1,7 @@
 from __future__ import annotations
 from logging import getLogger
 from dataclasses import dataclass, field
-from typing import Optional, ByteString
+from typing import ByteString
 from struct import unpack_from as struct_unpack_from
 from re import sub as re_sub
 
@@ -10,7 +10,7 @@ from string_utils_py import underline, text_align_delimiter
 from lnk_parser.structures.shell_link_header import ShellLinkHeader
 from lnk_parser.structures.link_target_id_list import LinkTargetIDList
 from lnk_parser.structures.link_info import LinkInfo
-from lnk_parser.utils import _read_string_data_field
+from lnk_parser.utils import _decode_string_data_field
 from lnk_parser.structures.extra_data import ExtraData, UnsupportedExtraData
 
 LOG = getLogger(__name__)
@@ -19,23 +19,29 @@ LOG = getLogger(__name__)
 @dataclass
 class ShellLink:
     header: ShellLinkHeader
-    link_target_id_list: Optional[LinkTargetIDList] = None
-    link_info: Optional[LinkInfo] = None
-    name_string: Optional[str] = None
-    relative_path: Optional[str] = None
-    working_dir: Optional[str] = None
-    command_line_arguments: Optional[str] = None
-    icon_location: Optional[str] = None
+    link_target_id_list: LinkTargetIDList | None = None
+    link_info: LinkInfo | None = None
+    name_string: str | None = None
+    relative_path: str | None = None
+    working_dir: str | None = None
+    command_line_arguments: str | None = None
+    icon_location: str | None = None
     extra_data_list: list[ExtraData] = field(default_factory=list)
 
     # TODO: Add `strict` parameter.
     @classmethod
-    def from_bytes(cls, data: ByteString, base_offset: int = 0) -> ShellLink:
+    def from_bytes(
+        cls,
+        data: ByteString | memoryview,
+        base_offset: int = 0,
+        system_default_encoding: str | None = None
+    ) -> ShellLink:
         """
         Make a shell link from a sequence of bytes.
 
         :param data: A byte sequence from which to extract the bytes constituting the shell link.
         :param base_offset: The offset from the start of the byte sequence from where to start extracting.
+        :param system_default_encoding: The default encoding on the system on which the data was generated.
         :return: A shell link.
         """
 
@@ -45,13 +51,21 @@ class ShellLink:
         offset = base_offset + len(header)
 
         if header.link_flags.has_link_target_id_list:
-            link_target_id_list = LinkTargetIDList.from_bytes(data=data, base_offset=offset)
+            link_target_id_list = LinkTargetIDList.from_bytes(
+                data=data,
+                base_offset=offset,
+                system_default_encoding=system_default_encoding
+            )
             offset += struct_unpack_from('<H', buffer=data, offset=offset)[0] + len(LinkTargetIDList.TERMINAL_ID)
         else:
             link_target_id_list = None
 
         if header.link_flags.has_link_info:
-            link_info = LinkInfo.from_bytes(data=data, base_offset=offset)
+            link_info = LinkInfo.from_bytes(
+                data=data,
+                base_offset=offset,
+                system_default_encoding=system_default_encoding
+            )
             offset += link_info.size
         else:
             link_info = None
@@ -69,10 +83,11 @@ class ShellLink:
             if not string_data_present:
                 continue
 
-            string_value, size = _read_string_data_field(
+            string_value, size = _decode_string_data_field(
                 buffer=data,
                 is_unicode=header.link_flags.is_unicode,
                 offset=offset,
+                system_default_encoding=system_default_encoding
             )
             offset += size
 
@@ -109,8 +124,7 @@ class ShellLink:
     def __str__(self) -> str:
         link_target_str: str = '\n\n'.join(str(link_target_id) for link_target_id in self.link_target_id_list)
         extra_data_str: str = '\n\n'.join(str(extra_data) for extra_data in self.extra_data_list)
-
-        # TODO: Add `LinkInfo` string.
+        link_info_str = str(self.link_info) if self.link_info is not None else ''
 
         return text_align_delimiter(
             text=re_sub(
@@ -128,6 +142,8 @@ class ShellLink:
                     f'{self.header}\n'
                     f'{underline(string="Link target IDs", underline_character="-")}\n'
                     f'{link_target_str}\n'
+                    f'{underline(string="Link info", underline_character="-")}\n'
+                    f'{link_info_str}'
                     f'{underline(string="Extra data", underline_character="-")}\n'
                     f'{extra_data_str}\n'
                 )

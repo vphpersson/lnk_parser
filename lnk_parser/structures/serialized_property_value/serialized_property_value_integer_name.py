@@ -1,10 +1,10 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ByteString, Optional
+from typing import ByteString
 from struct import unpack_from
 from uuid import UUID
 
-from lnk_parser.utils import _read_null_terminated_string, _format_str
+from lnk_parser.utils import _decode_null_terminated_string, _format_str
 from lnk_parser.structures.serialized_property_value import SerializedPropertyValue
 
 
@@ -15,7 +15,7 @@ class SerializedPropertyValueIntegerName(SerializedPropertyValue):
     value: bytes | str | int | UUID
 
     @classmethod
-    def from_bytes(cls, data: ByteString, base_offset: int = 0) -> Optional[SerializedPropertyValue]:
+    def from_bytes(cls, data: ByteString | memoryview, base_offset: int = 0) -> SerializedPropertyValue | None:
         data = memoryview(data)[base_offset:]
         offset = 0
 
@@ -43,7 +43,7 @@ class SerializedPropertyValueIntegerName(SerializedPropertyValue):
 
         # LPWSTR
         if value_type == 0x001F:
-            value, _ = _read_null_terminated_string(data=value_bytes, is_unicode=True, offset=4)
+            value, _ = _decode_null_terminated_string(data=value_bytes, is_unicode=True, offset=4)
         # GUID
         elif value_type == 0x0048:
             value = UUID(bytes_le=value_bytes)

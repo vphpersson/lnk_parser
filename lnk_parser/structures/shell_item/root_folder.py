@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ClassVar, FrozenSet
+from typing import ClassVar, FrozenSet, ByteString
 from uuid import UUID
 from struct import unpack_from as struct_unpack_from
 
@@ -19,7 +19,7 @@ class RootFolderShellItem(ShellItem):
     extension_block: bytes
 
     @classmethod
-    def _from_bytes(cls, data: bytes, base_offset: int = 0) -> RootFolderShellItem:
+    def _from_bytes(cls, data: ByteString | memoryview, base_offset: int = 0, **kwargs) -> RootFolderShellItem:
         """
         Make a root folder shell item from a sequence of bytes.
 
