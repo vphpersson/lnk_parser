@@ -4,6 +4,8 @@ from typing import ByteString
 from struct import unpack_from
 from uuid import UUID
 
+from msdsalgs.time import filetime_to_datetime
+
 from lnk_parser.utils import _decode_null_terminated_string, _format_str
 from lnk_parser.structures.serialized_property_value import SerializedPropertyValue
 
@@ -41,9 +43,16 @@ class SerializedPropertyValueIntegerName(SerializedPropertyValue):
 
         # TODO: Put the value types in an `IntEnum`. Refactor this.
 
+        # TODO: More types are listed at
+        #  https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-oleps/f122b9d7-e5cf-4484-8466-83f6fd94b3cc
+        #  Observed: 0x40 (FILETIME), 0x15 (8-byte unsigned integer)
+
         # LPWSTR
         if value_type == 0x001F:
             value, _ = _decode_null_terminated_string(data=value_bytes, is_unicode=True, offset=4)
+        # FILETIME
+        elif value_type == 0x0040:
+            value = filetime_to_datetime(filetime=value_bytes)
         # GUID
         elif value_type == 0x0048:
             value = UUID(bytes_le=value_bytes)
@@ -58,7 +67,7 @@ class SerializedPropertyValueIntegerName(SerializedPropertyValue):
     def __str__(self) -> str:
         return _format_str(
             string=(
-                f'Value size: {self.value_size}\n'
+                # f'Value size: {self.value_size}\n'
                 f'Value ID: {self.property_id}\n'
                 f'Value type: 0x{self.value_type:02x}\n'
                 f'Value: {self.value}\n'
