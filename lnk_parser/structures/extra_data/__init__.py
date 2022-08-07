@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ClassVar, Type, Optional, ByteString
+from typing import ClassVar, Type, ByteString
 from abc import ABC, abstractmethod
 from struct import unpack_from as struct_unpack_from
 
@@ -26,7 +26,7 @@ class ExtraData(ABC):
         raise NotImplementedError
 
     @classmethod
-    def from_bytes(cls, data: ByteString, base_offset: int = 0, strict: bool = True) -> Optional[ExtraData]:
+    def from_bytes(cls, data: ByteString | memoryview, base_offset: int = 0, strict: bool = True) -> ExtraData | None:
 
         from lnk_parser.structures.extra_data.special_folder_data_block import SpecialFolderDataBlock
         from lnk_parser.structures.extra_data.tracker_data_block import TrackerDataBlock
@@ -84,7 +84,7 @@ class UnsupportedExtraData(ExtraData):
         )
 
     @classmethod
-    def from_bytes(cls, data: ByteString, base_offset: int = 0, strict: bool = True) -> UnsupportedExtraData:
+    def from_bytes(cls, data: ByteString | memoryview, base_offset: int = 0, strict: bool = True) -> UnsupportedExtraData:
         return cls(
             signature=struct_unpack_from('<I', buffer=data, offset=base_offset+4)[0],
             block_size=struct_unpack_from('<I', buffer=data, offset=base_offset)[0]

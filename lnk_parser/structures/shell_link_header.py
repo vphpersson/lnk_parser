@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Optional, ClassVar, ByteString
+from typing import ClassVar, ByteString
 from struct import unpack_from as struct_unpack_from
 from uuid import UUID
 from datetime import datetime
@@ -22,16 +22,16 @@ class ShellLinkHeader:
 
     link_flags: LinkFlagsMask
     file_attributes: FileAttributes
-    creation_time: Optional[datetime]
-    access_time: Optional[datetime]
-    write_time: Optional[datetime]
+    creation_time: datetime | None
+    access_time: datetime | None
+    write_time: datetime | None
     file_size: int
     icon_index: int
     show_command: ShowCommand
-    hot_key: Optional[HotKeyFlags]
+    hot_key: HotKeyFlags | None
 
     @classmethod
-    def from_bytes(cls, data: ByteString, base_offset: int = 0) -> ShellLinkHeader:
+    def from_bytes(cls, data: ByteString | memoryview, base_offset: int = 0) -> ShellLinkHeader:
         """
         Make a shell link header from a sequence of bytes.
 

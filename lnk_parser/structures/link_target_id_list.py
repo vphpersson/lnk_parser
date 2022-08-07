@@ -1,6 +1,6 @@
 from __future__ import annotations
 from struct import unpack_from as struct_unpack_from, calcsize as struct_calcsize
-from typing import Optional, ByteString
+from typing import ByteString
 from pathlib import PureWindowsPath
 
 from lnk_parser.structures.shell_item import ShellItem
@@ -14,12 +14,18 @@ class LinkTargetIDList(list):
     TERMINAL_ID = b'\x00\x00'
 
     @classmethod
-    def from_bytes(cls, data: ByteString, base_offset: int = 0) -> LinkTargetIDList:
+    def from_bytes(
+        cls,
+        data: ByteString | memoryview,
+        base_offset: int = 0,
+        system_default_encoding: str | None = None
+    ) -> LinkTargetIDList:
         """
         Make a link target id list from a sequence of bytes.
 
         :param data: A byte sequence from which to extract the bytes constituting the link target id list.
         :param base_offset: The offset from the start of the byte sequence from where to start extracting.
+        :param system_default_encoding: The default encoding on the system on which the data was generated.
         :return: A link target id list.
         """
 
@@ -51,14 +57,20 @@ class LinkTargetIDList(list):
         shell_items: list[ShellItem | bytes] = []
         for shell_item_data in shell_item_data_list:
             try:
-                shell_items.append(ShellItem.from_bytes(data=shell_item_data, base_offset=0))
+                shell_items.append(
+                    ShellItem.from_bytes(
+                        data=shell_item_data,
+                        base_offset=0,
+                        system_default_encoding=system_default_encoding
+                    )
+                )
             except KeyError:
                 shell_items.append(shell_item_data)
 
         return cls(shell_items)
 
     @property
-    def path(self) -> Optional[PureWindowsPath]:
+    def path(self) -> PureWindowsPath | None:
         path_segments: list[str] = []
         for link_target in self.__iter__():
             if isinstance(link_target, VolumeShellItem):

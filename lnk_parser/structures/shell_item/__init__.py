@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
-from typing import ClassVar, Optional, Type
+from typing import ClassVar, Type, FrozenSet
 from struct import unpack_from as struct_unpack_from
 
 from lnk_parser.exceptions import ClassTypeIndicatorMismatchError
@@ -9,7 +9,7 @@ from lnk_parser.exceptions import ClassTypeIndicatorMismatchError
 
 @dataclass
 class ShellItem(ABC):
-    CLASS_TYPE_INDICATOR: ClassVar[set[int]] = NotImplemented
+    CLASS_TYPE_INDICATOR: ClassVar[FrozenSet[int]] = NotImplemented
 
     CLASS_TYPE_INDICATOR_TO_SHELL_ITEM_CLASS: ClassVar[dict[int, Type[ShellItem]]] = {}
 
@@ -22,11 +22,21 @@ class ShellItem(ABC):
     # TODO: Add `strict` parameter.
     @classmethod
     @abstractmethod
-    def _from_bytes(cls, data: bytes, base_offset: int = 0) -> ShellItem:
+    def _from_bytes(
+        cls,
+        data: bytes,
+        base_offset: int = 0,
+        system_default_encoding: str | None = None
+    ) -> ShellItem | None:
         raise NotImplementedError
 
     @classmethod
-    def from_bytes(cls, data: bytes, base_offset: int = 0) -> Optional[ShellItem]:
+    def from_bytes(
+        cls,
+        data: bytes,
+        base_offset: int = 0,
+        system_default_encoding: str | None = None
+    ) -> ShellItem | None:
         """
         Make a shell item from a sequence of bytes.
 
@@ -35,6 +45,7 @@ class ShellItem(ABC):
 
         :param data: A byte sequence from which to extract the bytes constituting the shell item.
         :param base_offset: The offset from the start of the byte sequence from where to start extracting.
+        :param system_default_encoding: The default encoding on the system on which the data was generated.
         :return: A shell item.
         """
 
@@ -56,7 +67,8 @@ class ShellItem(ABC):
                 )
             return cls._from_bytes(
                 data=data,
-                base_offset=base_offset
+                base_offset=base_offset,
+                system_default_encoding=system_default_encoding
             )
         else:
             return cls.CLASS_TYPE_INDICATOR_TO_SHELL_ITEM_CLASS[class_type_indicator]._from_bytes(

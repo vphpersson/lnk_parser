@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import ByteString, Optional
+from typing import ByteString
 from uuid import UUID
 from struct import unpack_from
 
@@ -18,7 +18,7 @@ class PropertyStorage:
     properties: list[SerializedPropertyValue] = field(default_factory=list)
 
     @classmethod
-    def from_bytes(cls, data: ByteString, base_offset: int = 0) -> Optional[PropertyStorage]:
+    def from_bytes(cls, data: ByteString | memoryview, base_offset: int = 0) -> PropertyStorage | None:
         """
         Construct a `PropertyStorage` instance from a byte string.
 
