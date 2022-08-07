@@ -7,8 +7,9 @@ from sys import stderr
 
 from string_utils_py import text_align_delimiter, underline
 
+from lnk_parser import LOG
 from lnk_parser.cli import LnkParserArgumentParser
-from lnk_parser.structures.shell_link import ShellLink, LOG
+from lnk_parser.structures.shell_link import ShellLink
 from lnk_parser.utils import get_system_default_encoding
 
 # TODO: Add tests? (pytest)

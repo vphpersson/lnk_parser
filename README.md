@@ -34,73 +34,112 @@ $ ./lnk_parser.py ~/code/py/lnk_parser/lnk_files/2017_ham_11.lnk
 ======================================================
 General
 -------
-            Link target: C:\Windows\system32\cmd.exe
-              Arguments: /c start wscript /e:VBScript.Encode Manuel.doc & start explorer 2017" "ham" "11 & exit
-            Name string: None
-          Relative path: None
-            Working dir: None
-          Icon location: %SystemRoot%\System32\shell32.dll
+                 Link target: C:\Windows\system32\cmd.exe
+                   Arguments: /c start wscript /e:VBScript.Encode Manuel.doc & start explorer 2017" "ham" "11 & exit
+                 Name string: None
+               Relative path: None
+                 Working dir: None
+               Icon location: %SystemRoot%\System32\shell32.dll
 Header
 ------
-             Link flags: <LinkFlags.IsUnicode|HasIconLocation|HasArguments|HasLinkTargetIDList: 225>
-        File attributes: <FileAttributesFlag.0: 0>
-          Creation time: None
-            Access time: None
-             Write time: None
-              File size: 0
-             Icon index: 3
-           Show command: SW_SHOWMINNOACTIVE
-                Hot key: None
+                  Link flags: <LinkFlags.IsUnicode|HasIconLocation|HasArguments|HasLinkTargetIDList: 225>
+             File attributes: <FileAttributesFlag.0: 0>
+               Creation time: None
+                 Access time: None
+                  Write time: None
+                   File size: 0
+                  Icon index: 3
+                Show command: SW_SHOWMINNOACTIVE
+                     Hot key: None
 Link target IDs
 ---------------
-                   Type: RootFolderShellItem
-             Sort index: 80
-Shell folder identifier: 20d04fe0-3aea-1069-a2d8-08002b30309d
+                        Type: RootFolderShellItem
+                  Sort index: 80
+     Shell folder identifier: 20d04fe0-3aea-1069-a2d8-08002b30309d
 
-                   Type: VolumeShellItem
-                   Name: C:\
-                  Flags: <VolumeShellItemFlags.UNKNOWN_2|UNKNOWN_1|HAS_NAME: 7>
+                        Type: VolumeShellItem
+                        Name: C:\
+                       Flags: <VolumeShellItemFlags.UNKNOWN_2|UNKNOWN_1|HAS_NAME: 7>
 
-                   Type: FileEntryShellItem
-           Primary name: Windows
-                  Flags: <FileEntryShellItemFlags.IS_DIRECTORY: 1>
-              File size: None
-        File attributes: <FileAttributesFlag.FILE_ATTRIBUTE_DIRECTORY: 16>
-          Last modified: None
+                        Type: FileEntryShellItem
+                Primary name: Windows
+                       Flags: <FileEntryShellItemFlags.IS_DIRECTORY: 1>
+                   File size: None
+             File attributes: <FileAttributesFlag.FILE_ATTRIBUTE_DIRECTORY: 16>
+               Last modified: None
+                              Extension block
+                              ---------------
+           Extension version: <ExtensionVersion.WINDOWS_81_10: 9>
+               Creation time: None
+            Last access time: None
+                              NTFS file reference
+                              %%%%%%%%%%%%%%%%%%%
+             MFT Entry index: b'\x00\x00\x00\x00\x00\x00'
+             Sequence number: 0
+                              %%%%%%%%%%%%%%%%%%%
+                   Long name: Windows
+              Localized name: None
+First ext. block ver. offset: 22
 
-                   Type: FileEntryShellItem
-           Primary name: system32
-                  Flags: <FileEntryShellItemFlags.IS_DIRECTORY: 1>
-              File size: None
-        File attributes: <FileAttributesFlag.FILE_ATTRIBUTE_DIRECTORY: 16>
-          Last modified: None
+                        Type: FileEntryShellItem
+                Primary name: system32
+                       Flags: <FileEntryShellItemFlags.IS_DIRECTORY: 1>
+                   File size: None
+             File attributes: <FileAttributesFlag.FILE_ATTRIBUTE_DIRECTORY: 16>
+               Last modified: None
+                              Extension block
+                              ---------------
+           Extension version: <ExtensionVersion.WINDOWS_81_10: 9>
+               Creation time: None
+            Last access time: None
+                              NTFS file reference
+                              %%%%%%%%%%%%%%%%%%%
+             MFT Entry index: b'\x00\x00\x00\x00\x00\x00'
+             Sequence number: 0
+                              %%%%%%%%%%%%%%%%%%%
+                   Long name: system32
+              Localized name: None
+First ext. block ver. offset: 24
 
-                   Type: FileEntryShellItem
-           Primary name: cmd.exe
-                  Flags: <FileEntryShellItemFlags.IS_FILE: 2>
-              File size: None
-        File attributes: <FileAttributesFlag.0: 0>
-          Last modified: None
+                        Type: FileEntryShellItem
+                Primary name: cmd.exe
+                       Flags: <FileEntryShellItemFlags.IS_FILE: 2>
+                   File size: None
+             File attributes: <FileAttributesFlag.0: 0>
+               Last modified: None
+                              Extension block
+                              ---------------
+           Extension version: <ExtensionVersion.WINDOWS_81_10: 9>
+               Creation time: None
+            Last access time: None
+                              NTFS file reference
+                              %%%%%%%%%%%%%%%%%%%
+             MFT Entry index: b'\x00\x00\x00\x00\x00\x00'
+             Sequence number: 0
+                              %%%%%%%%%%%%%%%%%%%
+                   Long name: cmd.exe
+              Localized name: None
+First ext. block ver. offset: 22
 Link info
 ---------
 Extra data
 ----------
-                   Type: SpecialFolderDataBlock
-      Special folder ID: 37
-         Item ID offset: 221
+                        Type: SpecialFolderDataBlock
+           Special folder ID: 37
+              Item ID offset: 221
 
-                   Type: KnownFolderDataBlock
-        Known folder ID: 774ec11ae7025d4eb7442eb1ae5198b7
-                 Offset: 221
+                        Type: KnownFolderDataBlock
+             Known folder ID: 774ec11ae7025d4eb7442eb1ae5198b7
+                      Offset: 221
 
-                   Type: PropertyStoreDataBlock
-           Storage size: 137
-                Version: 0x53505331
-              Format ID: 46588ae2-4cbc-4338-bbfc-139326986dce
-             Value size: 109
-               Value ID: 4
-             Value type: 0x1f
-                  Value: S-1-5-21-5179467701-4371295956-389049647-1001
+                        Type: PropertyStoreDataBlock
+                Storage size: 137
+                     Version: 0x53505331
+                   Format ID: 46588ae2-4cbc-4338-bbfc-139326986dce
+                  Value size: 109
+                    Value ID: 4
+                  Value type: 0x1f
+                       Value: S-1-5-21-5179467701-4371295956-389049647-1001
 ```
 
 :thumbsup:
