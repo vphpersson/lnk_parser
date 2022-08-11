@@ -16,7 +16,8 @@ class PropertyStoreDataBlock(ExtraData):
     property_storages: list[PropertyStorage] = field(default_factory=list)
 
     def __post_init__(self, block_size: int):
-        self.BLOCK_SIZE = block_size
+        # NOTE: It seems these cover four more bytes than what `block_size` specifies...
+        PropertyStoreDataBlock.BLOCK_SIZE = block_size + 4
 
     @classmethod
     def _from_bytes(cls, data: memoryview, base_offset: int = 0, strict: bool = True) -> PropertyStoreDataBlock:

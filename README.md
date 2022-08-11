@@ -72,11 +72,6 @@ Link target IDs
            Extension version: <ExtensionVersion.WINDOWS_81_10: 9>
                Creation time: None
             Last access time: None
-                              NTFS file reference
-                              %%%%%%%%%%%%%%%%%%%
-             MFT Entry index: b'\x00\x00\x00\x00\x00\x00'
-             Sequence number: 0
-                              %%%%%%%%%%%%%%%%%%%
                    Long name: Windows
               Localized name: None
 First ext. block ver. offset: 22
@@ -92,11 +87,6 @@ First ext. block ver. offset: 22
            Extension version: <ExtensionVersion.WINDOWS_81_10: 9>
                Creation time: None
             Last access time: None
-                              NTFS file reference
-                              %%%%%%%%%%%%%%%%%%%
-             MFT Entry index: b'\x00\x00\x00\x00\x00\x00'
-             Sequence number: 0
-                              %%%%%%%%%%%%%%%%%%%
                    Long name: system32
               Localized name: None
 First ext. block ver. offset: 24
@@ -112,11 +102,6 @@ First ext. block ver. offset: 24
            Extension version: <ExtensionVersion.WINDOWS_81_10: 9>
                Creation time: None
             Last access time: None
-                              NTFS file reference
-                              %%%%%%%%%%%%%%%%%%%
-             MFT Entry index: b'\x00\x00\x00\x00\x00\x00'
-             Sequence number: 0
-                              %%%%%%%%%%%%%%%%%%%
                    Long name: cmd.exe
               Localized name: None
 First ext. block ver. offset: 22
@@ -136,7 +121,6 @@ Extra data
                 Storage size: 137
                      Version: 0x53505331
                    Format ID: 46588ae2-4cbc-4338-bbfc-139326986dce
-                  Value size: 109
                     Value ID: 4
                   Value type: 0x1f
                        Value: S-1-5-21-5179467701-4371295956-389049647-1001
