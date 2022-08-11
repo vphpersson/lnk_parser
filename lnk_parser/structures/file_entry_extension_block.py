@@ -65,8 +65,8 @@ class FileEntryExtensionBlock:
             # unknown
             offset += 2
 
-            ntfs_file_reference = NTFSFileReference.from_bytes(data=data, offset=offset)
-            offset += len(ntfs_file_reference)
+            ntfs_file_reference: NTFSFileReference | None = NTFSFileReference.from_bytes(data=data, offset=offset)
+            offset += NTFSFileReference.SIZE
 
             # unknown
             offset += 8
@@ -131,15 +131,22 @@ class FileEntryExtensionBlock:
 
     def __str__(self) -> str:
 
-        ntfs_file_reference_label = 'NTFS file reference'
+        if self.ntfs_file_reference:
+            ntfs_file_reference_label = 'NTFS file reference'
+
+            ntfs_file_reference_text = (
+                f'{underline(string=ntfs_file_reference_label, underline_character="%")}\n'
+                f'{self.ntfs_file_reference or ""}'
+                f'{"%" * len(ntfs_file_reference_label)}\n'
+            )
+        else:
+            ntfs_file_reference_text = ''
 
         return (
             f'Extension version: {repr(self.extension_version)}\n'
             f'Creation time: {self.creation_datetime}\n'
             f'Last access time: {self.last_access_datetime}\n'
-            f'{underline(string=ntfs_file_reference_label, underline_character="%")}\n'
-            f'{self.ntfs_file_reference or ""}'
-            f'{"%" * len(ntfs_file_reference_label)}\n'
+            f'{ntfs_file_reference_text}'
             f'Long name: {self.long_name}\n'
             f'Localized name: {self.localized_name}\n'
             f'First ext. block ver. offset: {self.first_extension_block_version_offset}\n'
